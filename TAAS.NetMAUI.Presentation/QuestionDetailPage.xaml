@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TAAS.NetMAUI.Presentation.QuestionDetailPage"
+             xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters"             
+             Title="QuestionDetailPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
+    <Grid RowDefinitions="2*, 3*, Auto" RowSpacing="10">
+        <CollectionView x:Name="FilesCollectionView"
+                    Margin="10"
+                    Grid.Row="0" 
+                    VerticalOptions="Fill">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
+                        <Border.BackgroundColor>
+                            <Binding Path="IsSelected" Converter="{StaticResource BoolToColorConverter}" />
+                        </Border.BackgroundColor>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnBorderTapped">
+                            </TapGestureRecognizer>
+                        </Border.GestureRecognizers>
+                        <Border.Content>
+                            <VerticalStackLayout>
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="File Name: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Name}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Size: " FontAttributes="Bold" />
+                                            <Span Text="{Binding  Size}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border.Content>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <WebView x:Name="EditorWebView"
+             Source="editor.html"
+             Grid.Row="1" />
+
+        <Button Text="Save"
+            Grid.Row="2"
+            BackgroundColor="LightBlue"
+            Clicked="OnSaveClicked" />
+    </Grid>
+</ContentPage>

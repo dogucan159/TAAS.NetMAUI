@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="tinymce/tinymce.min.js"></script>
+
+    <script>
+        tinymce.init({
+            selector: '#editor',
+            height: 400,
+            menubar: false,
+            resize: false,
+            plugins: 'lists link image code table',
+            toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image table | code',
+            license_key: 'gpl',
+            setup: function (editor) {
+                window.getContent = function () {
+                    return editor.getContent();
+                };
+                window.setContent = function (html) {
+                    editor.setContent(html);
+                };
+            }
+        });
+    </script>
+</head>
+<body>
+    <textarea id="editor">Start editing...</textarea>
+</body>
+</html>

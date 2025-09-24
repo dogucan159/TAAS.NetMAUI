@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TAAS.NetMAUI.Presentation.ChecklistSelectionPage"
+             xmlns:vm="clr-namespace:TAAS.NetMAUI.Presentation.ViewModels"  
+             xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters"                
+             Title="Checklists from API">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+            <converters:CoordinatorAuditorToStringConverter x:Key="CoordinatorAuditorToStringConverter" />
+            <converters:ChecklistAuditorsToStringConverter x:Key="ChecklistAuditorsToStringConverter" />
+            <converters:InstitutionToStringConverter x:Key="InstitutionToStringConverter" />
+            <converters:KeyRequirementToStringConverter x:Key="KeyRequirementToStringConverter" />
+            <converters:SpecificFunctionToStringConverter x:Key="SpecificFunctionToStringConverter" />
+            <converters:ChecklistTemplateToStringConverter x:Key="ChecklistTemplateToStringConverter" />
+            <converters:ObjectNullToBoolConverter x:Key="ObjectNullToBoolConverter" />
+            <converters:StringNullToBoolConverter x:Key="StringNullToBoolConverter" />            
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <ActivityIndicator 
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                Color="DarkGray"
+                HeightRequest="30"
+                HorizontalOptions="Center" />
+            <!--<Button 
+                HorizontalOptions="Fill"
+                VerticalOptions="Center"
+                Text="Get Checklists"
+                Command="{Binding GetChecklistsCommand}"
+                IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                BackgroundColor="SteelBlue"
+                TextColor="White"
+                CornerRadius="8" 
+                Margin="10"
+                />-->
+
+            <CollectionView ItemsSource="{Binding Checklists}" Margin="10" EmptyView="No data to display">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
+                            <Border.BackgroundColor>
+                                <Binding Path="IsSelected" Converter="{StaticResource BoolToColorConverter}" />
+                            </Border.BackgroundColor>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistSelectionViewModel}}, 
+                                    Path=ToggleChecklistSelectionCommand}" CommandParameter="{Binding .}">
+                                </TapGestureRecognizer>
+                            </Border.GestureRecognizers>
+                            <Border.Content>
+                                <VerticalStackLayout>
+                                    <Label IsVisible="{Binding Institution, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Bodies: " FontAttributes="Bold" />
+                                                <Span Text="{Binding Institution, Converter={StaticResource InstitutionToStringConverter}}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+
+                                    <Label IsVisible="{Binding KeyRequirement, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Key Requirement: " FontAttributes="Bold" />
+                                                <Span Text="{Binding KeyRequirement, Converter={StaticResource KeyRequirementToStringConverter}}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label IsVisible="{Binding SpecificFunction, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Specific Function: " FontAttributes="Bold" />
+                                                <Span Text="{Binding SpecificFunction, Converter={StaticResource SpecificFunctionToStringConverter}}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label IsVisible="{Binding Comment, Converter={StaticResource StringNullToBoolConverter}}">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Comment: " FontAttributes="Bold" />
+                                                <Span Text="{Binding Comment}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label IsVisible="{Binding SamplingRowNumber, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Row Number: " FontAttributes="Bold" />
+                                                <Span Text="{Binding SamplingRowNumber}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>                                    
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Checklist Template: " FontAttributes="Bold" />
+                                                <Span Text="{Binding ChecklistTemplate, Converter={StaticResource ChecklistTemplateToStringConverter}}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <HorizontalStackLayout Spacing="10">
+                                        <Label Text="Turkish:" VerticalOptions="Center" FontAttributes="Bold"/>
+                                        <CheckBox IsChecked="{Binding Turkish}" IsEnabled="False" />
+                                    </HorizontalStackLayout>
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Reviewer: " FontAttributes="Bold" />
+                                                <Span Text="{Binding ReviewedAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Auditors: " FontAttributes="Bold" />
+                                                <Span Text="{Binding ChecklistAuditors, Converter={StaticResource ChecklistAuditorsToStringConverter}}"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </Border.Content>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button 
+                Text="Sync Selected"
+                FontAttributes="None"
+                HorizontalOptions="Fill"
+                VerticalOptions="Center"
+                Command="{Binding SyncSelectedCommand}"
+                IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                IsVisible="{Binding HasSelected}"
+                BackgroundColor="SteelBlue"
+                TextColor="White"
+                CornerRadius="8"
+                >
+
+            </Button>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
