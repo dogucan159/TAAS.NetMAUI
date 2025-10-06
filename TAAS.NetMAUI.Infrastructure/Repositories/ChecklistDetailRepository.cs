@@ -18,6 +18,8 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
         public async Task<List<ChecklistDetail>> GetAllChecklistDetailByChecklistId( long checklistId, bool trackChanges ) =>
             await FindByCondition( b => b.ChecklistId == checklistId, trackChanges )
             .Include( b => b.ChecklistTemplateDetail )
+            .Include( b => b.ChecklistDetailTaasFiles )
+            .ThenInclude( b => b.TaasFile )
             .ToListAsync();
 
         public async Task<ChecklistDetail?> GetOneChecklistDetailById( long id, bool trackChanges ) =>

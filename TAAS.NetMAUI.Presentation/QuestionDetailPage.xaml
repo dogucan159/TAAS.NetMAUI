@@ -11,7 +11,7 @@
     </ContentPage.Resources>
 
 
-    <Grid RowDefinitions="2*, 3*, Auto" RowSpacing="10">
+    <Grid RowDefinitions="2*, 5*, Auto" RowSpacing="10">
         <CollectionView x:Name="FilesCollectionView"
                     Margin="10"
                     Grid.Row="0" 

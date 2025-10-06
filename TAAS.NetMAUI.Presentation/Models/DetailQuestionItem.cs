@@ -13,6 +13,10 @@ namespace TAAS.NetMAUI.Presentation.Models {
 
         public string Answer { get; set; }
         public string Explanation { get; set; }
+
+        public string FileNames { get; set; }
+        public bool HasExplanationFormatted { get; set; }
+
         public bool IsTouched { get; set; } = false;
     }
 }

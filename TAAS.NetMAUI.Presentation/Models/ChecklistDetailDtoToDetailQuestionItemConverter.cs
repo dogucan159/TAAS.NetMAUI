@@ -16,7 +16,9 @@ namespace TAAS.NetMAUI.Presentation.Models {
                     Comment = dto.ChecklistTemplateDetail.Comment,
                     CommentTr = dto.ChecklistTemplateDetail.CommentTr,
                     Answer = dto.Answer,
-                    Explanation = dto.Explanation
+                    Explanation = dto.Explanation,
+                    FileNames = dto.ChecklistDetailTaasFiles?.Any() == true ? string.Join( ", ", dto.ChecklistDetailTaasFiles.Select( f => f.TaasFile.Name ) ) : "No files attached...",
+                    HasExplanationFormatted = !string.IsNullOrEmpty( dto.ExplanationFormatted )
                 } );
             }
 
