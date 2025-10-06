@@ -80,6 +80,7 @@ namespace TAAS.NetMAUI.Presentation {
             builder.Services.AddTransient<ChecklistViewModel>();
             builder.Services.AddTransient<ChecklistSelectionViewModel>();
             builder.Services.AddTransient<ChecklistDetailViewModel>();
+            builder.Services.AddTransient<QuestionDetailPage>();
 
             return builder.Build();
         }

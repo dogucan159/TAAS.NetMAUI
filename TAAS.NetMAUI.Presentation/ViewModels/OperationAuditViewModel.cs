@@ -33,5 +33,10 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             await Shell.Current.GoToAsync( nameof( ChecklistPage ) );
         }
 
+        [RelayCommand]
+        private async System.Threading.Tasks.Task NavigateToMainPage() {
+            await Shell.Current.GoToAsync( "//MainPage" );
+        }
+
     }
 }

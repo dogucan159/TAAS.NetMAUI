@@ -7,8 +7,14 @@
     Title="TAAS.NetMAUI.Presentation">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+            Title="Main Page"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="MainPage" 
+            />
+
+    <MenuItem
+        Text="Sign Out"
+        Clicked="OnSignOutClicked"
+        IconImageSource="logout.png" />
 
 </Shell>

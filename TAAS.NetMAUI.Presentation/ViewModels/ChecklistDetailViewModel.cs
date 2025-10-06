@@ -213,6 +213,27 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         }
 
         [RelayCommand]
+        private async System.Threading.Tasks.Task DownloadPhotoAsync( DisplayPhotoItem displayPhoto ) {
+
+            try {
+
+                var checklistTaasFile = await _manager.ChecklistTaasFileService.GetById( displayPhoto.Id, true );
+                var fileName = $"{checklistTaasFile.TaasFile.Name}";
+                var filePath = Path.Combine( FileSystem.AppDataDirectory, fileName );
+
+                File.WriteAllBytes( filePath, checklistTaasFile.TaasFile.FileData );
+
+                await Launcher.OpenAsync( new OpenFileRequest {
+                    File = new ReadOnlyFile( filePath )
+                } );
+            }
+            catch ( Exception ex ) {
+                Debug.WriteLine( $"[DownloadPhotoAsync] {ex.Message}" );
+                await Shell.Current.DisplayAlert( "Error", "Failed to download photo.", "OK" );
+            }
+        }
+
+        [RelayCommand]
         private async System.Threading.Tasks.Task UploadFileAsync() {
             try {
                 var result = await FilePicker.PickAsync( new PickOptions {
@@ -287,5 +308,36 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             NavigationContext.ChecklistDetailId = detail.Id;
             await Shell.Current.GoToAsync( nameof( QuestionDetailPage ) );
         }
+        [RelayCommand]
+        private async System.Threading.Tasks.Task NavigateToMainPage() {
+            await Shell.Current.GoToAsync( "//MainPage" );
+        }
+
+        [RelayCommand]
+        private async System.Threading.Tasks.Task NavigateToChecklistPage() {
+            await Shell.Current.GoToAsync( nameof( ChecklistPage ) );
+        }
+
+        [RelayCommand]
+        private async Task DownloadFileAsync( UploadedFileItem uploadedFile ) {           
+
+            try {
+
+                var checklistTaasFile = await _manager.ChecklistTaasFileService.GetById( uploadedFile.Id, true );
+                var fileName = $"{checklistTaasFile.TaasFile.Name}";
+                var filePath = Path.Combine( FileSystem.AppDataDirectory, fileName );
+
+                File.WriteAllBytes( filePath, checklistTaasFile.TaasFile.FileData );
+
+                await Launcher.OpenAsync( new OpenFileRequest {
+                    File = new ReadOnlyFile( filePath )
+                } );
+            }
+            catch ( Exception ex ) {
+                Debug.WriteLine( $"[DownloadFileAsync] {ex.Message}" );
+                await Shell.Current.DisplayAlert( "Error", "Failed to download file.", "OK" );
+            }
+        }
+
     }
 }

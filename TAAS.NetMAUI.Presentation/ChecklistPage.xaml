@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TAAS.NetMAUI.Presentation"             
              x:Class="TAAS.NetMAUI.Presentation.ChecklistPage"
-             xmlns:vm="clr-namespace:TAAS.NetMAUI.Presentation.ViewModels"  
+             xmlns:vm="clr-namespace:TAAS.NetMAUI.Presentation.ViewModels"
              xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters"             
              Title="Checklists">
 
@@ -19,15 +20,24 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-
     <ScrollView>
-        <VerticalStackLayout>
+        <VerticalStackLayout Padding="5" Spacing="5">
             <ActivityIndicator 
-                IsRunning="{Binding IsBusy}"
-                IsVisible="{Binding IsBusy}"
-                Color="DarkGray"
-                HeightRequest="30"
-                HorizontalOptions="Center" />            
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    Color="DarkGray"
+                    HeightRequest="30"
+                    HorizontalOptions="Center" />
+            <Label Text="Checklists" FontAttributes="Bold" FontSize="Medium" />
+            <HorizontalStackLayout Margin="10" Spacing="5">
+                <Label Text="Main Page" TextColor="Blue" TextDecorations="Underline" FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToMainPageCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label Text=">" />
+                <Label Text="Checklists" FontAttributes="Bold" />
+            </HorizontalStackLayout>
             <HorizontalStackLayout HorizontalOptions="Fill">
                 <Grid HorizontalOptions="Fill">
                     <Grid.ColumnDefinitions>
@@ -37,130 +47,137 @@
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
                     <Button
-                       Grid.Column="0"
-                       Text="Pull Data"
-                       Command="{Binding PullDataCommand}"
-                       BackgroundColor="LightBlue"
-                       TextColor="Black"
-                       FontAttributes="None"
-                       CornerRadius="10"
-                       Margin="10,5"
-                   />
+                           Grid.Column="0"
+                           Text="Pull Data"
+                           Command="{Binding PullDataCommand}"
+                           BackgroundColor="LightBlue"
+                           TextColor="Black"
+                           FontAttributes="None"
+                           CornerRadius="10"
+                           Margin="10,5"
+                       />
                     <Button
-                       Grid.Column="1"
-                       Text="Transfer to Live"
-                       Command="{Binding TransferToLiveCommand}"
-                       BackgroundColor="LightGreen"
-                       TextColor="Black"
-                       FontAttributes="None"
-                       CornerRadius="10"
-                       Margin="10,5"
-                   />
+                           Grid.Column="1"
+                           Text="Transfer to Live"
+                           Command="{Binding TransferToLiveCommand}"
+                           BackgroundColor="LightGreen"
+                           TextColor="Black"
+                           FontAttributes="None"
+                           CornerRadius="10"
+                           Margin="10,5"
+                       />
                     <CheckBox 
-                        Grid.Column="2"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Center"
-                        IsChecked="{Binding DeleteAfterTransfer}"
-                        IsEnabled="False"
-                    />
+                            Grid.Column="2"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center"
+                            IsChecked="{Binding DeleteAfterTransfer}"
+                            IsEnabled="False"
+                        />
                     <Label 
-                        Grid.Column="3"
-                        Text="Delete After Transfer" 
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Center"/>
+                            Grid.Column="3"
+                            Text="Delete After Transfer" 
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center"/>
                 </Grid>
             </HorizontalStackLayout>
 
-            <CollectionView ItemsSource="{Binding Checklists}" EmptyView="No data to display">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
-                            <Border.Content>
-                                <VerticalStackLayout>
-                                    <Label IsVisible="{Binding Institution, Converter={StaticResource ObjectNullToBoolConverter}}">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Bodies: " FontAttributes="Bold" />
-                                                <Span Text="{Binding Institution, Converter={StaticResource InstitutionToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
+            <local:SelectedAuditAssignmentView />
+            <VerticalStackLayout Padding="5" Spacing="5">
+                <Label Text="Checklists" FontAttributes="Bold" FontSize="Medium" />
+                <CollectionView ItemsSource="{Binding Checklists}" EmptyView="No data to display">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
+                                <Border.Content>
+                                    <VerticalStackLayout>
+                                        <Label IsVisible="{Binding Institution, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Bodies: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding Institution, Converter={StaticResource InstitutionToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
 
-                                    <Label IsVisible="{Binding KeyRequirement, Converter={StaticResource ObjectNullToBoolConverter}}">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Key Requirement: " FontAttributes="Bold" />
-                                                <Span Text="{Binding KeyRequirement, Converter={StaticResource KeyRequirementToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label IsVisible="{Binding SpecificFunction, Converter={StaticResource ObjectNullToBoolConverter}}">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Specific Function: " FontAttributes="Bold" />
-                                                <Span Text="{Binding SpecificFunction, Converter={StaticResource SpecificFunctionToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label IsVisible="{Binding Comment, Converter={StaticResource StringNullToBoolConverter}}">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Comment: " FontAttributes="Bold" />
-                                                <Span Text="{Binding Comment}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label IsVisible="{Binding SamplingRowNumber, Converter={StaticResource ObjectNullToBoolConverter}}">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Row Number: " FontAttributes="Bold" />
-                                                <Span Text="{Binding SamplingRowNumber}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Checklist Template: " FontAttributes="Bold" />
-                                                <Span Text="{Binding ChecklistTemplate, Converter={StaticResource ChecklistTemplateToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <HorizontalStackLayout Spacing="10">
-                                        <Label Text="Turkish:" VerticalOptions="Center" FontAttributes="Bold"/>
-                                        <CheckBox IsChecked="{Binding Turkish}" IsEnabled="False" />
-                                    </HorizontalStackLayout>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Reviewer: " FontAttributes="Bold" />
-                                                <Span Text="{Binding ReviewedAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Auditors: " FontAttributes="Bold" />
-                                                <Span Text="{Binding ChecklistAuditors, Converter={StaticResource ChecklistAuditorsToStringConverter}}"/>
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <HorizontalStackLayout Margin="10">
-                                        <Button Text="Show Detail"
+                                        <Label IsVisible="{Binding KeyRequirement, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Key Requirement: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding KeyRequirement, Converter={StaticResource KeyRequirementToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label IsVisible="{Binding SpecificFunction, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Specific Function: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding SpecificFunction, Converter={StaticResource SpecificFunctionToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label IsVisible="{Binding Comment, Converter={StaticResource StringNullToBoolConverter}}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Comment: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding Comment}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label IsVisible="{Binding SamplingRowNumber, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Row Number: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding SamplingRowNumber}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Checklist Template: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding ChecklistTemplate, Converter={StaticResource ChecklistTemplateToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <HorizontalStackLayout Spacing="10">
+                                            <Label Text="Turkish:" VerticalOptions="Center" FontAttributes="Bold"/>
+                                            <CheckBox IsChecked="{Binding Turkish}" IsEnabled="False" />
+                                        </HorizontalStackLayout>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Reviewer: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding ReviewedAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Auditors: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding ChecklistAuditors, Converter={StaticResource ChecklistAuditorsToStringConverter}}"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <HorizontalStackLayout Margin="10">
+                                            <Button Text="Show Detail"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistViewModel}}, Path=ShowChecklistDetailCommand}"
                                             CommandParameter="{Binding .}"
                                             BackgroundColor="#1976d2"
                                             TextColor="White"
                                             CornerRadius="8" />
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-                            </Border.Content>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border.Content>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+
         </VerticalStackLayout>
     </ScrollView>
+
 
 </ContentPage>

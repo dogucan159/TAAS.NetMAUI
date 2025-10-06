@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -122,6 +123,18 @@ public partial class QuestionDetailPage : ContentPage {
         if ( sender is Border border && border.BindingContext is TaasFileItem item ) {
             item.IsSelected = !item.IsSelected;
         }
+    }
+
+    private async void OnMainPageTapped( object sender, EventArgs e ) {
+        await Shell.Current.GoToAsync( "//MainPage" );
+    }
+
+    private async void OnChecklistPageTapped( object sender, EventArgs e ) {
+        await Shell.Current.GoToAsync( nameof( ChecklistPage ) );
+    }
+
+    private async void OnChecklistDetailPageTapped( object sender, EventArgs e ) {
+        await Shell.Current.GoToAsync( nameof( ChecklistDetailPage ) );
     }
 
 }

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Windows.Input;
 using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Presentation.Data;
@@ -74,6 +75,11 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                     IsBusy = false;
                 }
             }
+        }
+
+        [RelayCommand]
+        private async System.Threading.Tasks.Task NavigateToMainPage() {
+            await Shell.Current.GoToAsync( "//MainPage" );
         }
 
     }

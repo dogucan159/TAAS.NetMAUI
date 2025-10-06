@@ -25,6 +25,7 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
 
         public async Task<ChecklistTaasFile> GetOneChecklistTaasFileById( long id, bool trackChanges ) =>
             await FindByCondition( b => b.Id == id, trackChanges )
+            .Include( b => b.TaasFile )
             .FirstAsync();
 
         public async Task<List<ChecklistTaasFile>> GetAllChecklistTaasFilesByChecklistId( long checklistId, bool trackChanges ) =>
