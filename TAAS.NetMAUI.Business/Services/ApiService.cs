@@ -76,6 +76,94 @@ namespace TAAS.NetMAUI.Business.Services {
 
         }
 
+        public async Task<List<AuditAssignmentDto>?> PullAuditAssignmentsByTaskTypeFromAPI( string code, string token ) {
+
+            try {
+                String key = SettingsKeyConst.API_ADDRESS;
+                var setting = await _manager.Setting.GetOneSettingByKey( key, false );
+
+                if ( setting == null )
+                    throw new Exception( $"The setting with key : {key} could not found." );
+
+
+                //https://dev-taas.hmb.gov.tr/backend/
+                HttpClient client = new() {
+                    BaseAddress = new Uri( setting.Value )
+                };
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
+
+                var payload = new {
+                    ilike = new { taskTypeCode = code },
+                    page = 0,
+                    size = 20
+                };
+
+                var json = System.Text.Json.JsonSerializer.Serialize( payload );
+                var content = new StringContent( json, Encoding.UTF8, "application/json" );
+                List<AuditAssignmentDto>? result = null;
+                try {
+                    var response = await client.PostAsync( "audit-assignment/queryInfo", content );
+                    response.EnsureSuccessStatusCode();
+                    var auditAssignmentsJsonString = await response.Content.ReadAsStringAsync();
+                    result = JsonConvert.DeserializeObject<RootObject>( auditAssignmentsJsonString )?.Content;
+                }
+                catch ( HttpRequestException ex ) {
+                    throw new Exception( ex.Message );
+                }
+
+                return result;
+            }
+            catch ( Exception ex ) {
+                throw new Exception( ex.Message );
+            }
+
+
+        }
+
+        public async Task<List<AuditAssignmentDto>?> PullAuditAssignmentsByTaskFromAPI( string code, string token ) {
+
+            try {
+                String key = SettingsKeyConst.API_ADDRESS;
+                var setting = await _manager.Setting.GetOneSettingByKey( key, false );
+
+                if ( setting == null )
+                    throw new Exception( $"The setting with key : {key} could not found." );
+
+
+                //https://dev-taas.hmb.gov.tr/backend/
+                HttpClient client = new() {
+                    BaseAddress = new Uri( setting.Value )
+                };
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
+
+                var payload = new {
+                    ilike = new { taskCode = code },
+                    page = 0,
+                    size = 20
+                };
+
+                var json = System.Text.Json.JsonSerializer.Serialize( payload );
+                var content = new StringContent( json, Encoding.UTF8, "application/json" );
+                List<AuditAssignmentDto>? result = null;
+                try {
+                    var response = await client.PostAsync( "audit-assignment/queryInfo", content );
+                    response.EnsureSuccessStatusCode();
+                    var auditAssignmentsJsonString = await response.Content.ReadAsStringAsync();
+                    result = JsonConvert.DeserializeObject<RootObject>( auditAssignmentsJsonString )?.Content;
+                }
+                catch ( HttpRequestException ex ) {
+                    throw new Exception( ex.Message );
+                }
+
+                return result;
+            }
+            catch ( Exception ex ) {
+                throw new Exception( ex.Message );
+            }
+
+
+        }
+
         public async Task<List<ChecklistDto>?> PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( long auditAssignmentId, long auditTypeId, string token ) {
             String key = SettingsKeyConst.API_ADDRESS;
             var setting = await _manager.Setting.GetOneSettingByKey( key, false );
@@ -310,6 +398,18 @@ namespace TAAS.NetMAUI.Business.Services {
         public async System.Threading.Tasks.Task SyncChecklistAsync( ChecklistDto checklistDto, string token ) {
             try {
 
+
+                String key = SettingsKeyConst.API_ADDRESS;
+                var setting = await _manager.Setting.GetOneSettingByKey( key, false );
+
+                if ( setting == null )
+                    throw new Exception( $"The setting with key : {key} could not found." );
+
+                HttpClient client = new() {
+                    BaseAddress = new Uri( setting.Value )
+                };
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
+
                 Checklist checklist = new Checklist() {
                     Id = checklistDto.Id,
                     ChecklistAuditors = new List<ChecklistAuditor>(),
@@ -376,16 +476,6 @@ namespace TAAS.NetMAUI.Business.Services {
                             newChecklistTaasFile.TaasFile = dbTaasFile;
                         else {
                             //taas-file/getWithFileData
-                            String key = SettingsKeyConst.API_ADDRESS;
-                            var setting = await _manager.Setting.GetOneSettingByKey( key, false );
-
-                            if ( setting == null )
-                                throw new Exception( $"The setting with key : {key} could not found." );
-
-                            HttpClient client = new() {
-                                BaseAddress = new Uri( setting.Value )
-                            };
-                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
                             try {
                                 var response = await client.GetAsync( $"taas-file/getWithFileData?id={taasFileDto.Id}" );
                                 response.EnsureSuccessStatusCode();
@@ -449,6 +539,20 @@ namespace TAAS.NetMAUI.Business.Services {
                 //Checklist
                 _manager.Checklist.CreateOneChecklist( checklist );
                 await _manager.SaveAsync();
+
+                //CODE HERE: API'de checklist offline ozelligini true yapan metod cagrilacak.
+                var checklistPayload = new {
+                    offline = true
+                };
+                var checklistJson = System.Text.Json.JsonSerializer.Serialize( checklistPayload );
+                var checklistContent = new StringContent( checklistJson, Encoding.UTF8, "application/json" );
+                try {
+                    var response = await client.PutAsync( $"checklist/{checklist.Id}/updateOffline", checklistContent );
+                    response.EnsureSuccessStatusCode();
+                }
+                catch ( HttpRequestException ex ) {
+                    throw new Exception( ex.Message );
+                }
             }
             catch ( Exception ex ) {
 
@@ -671,6 +775,20 @@ namespace TAAS.NetMAUI.Business.Services {
                     _manager.Checklist.DeleteOneChecklist( dbChecklist );
                     _manager.ChecklistTemplate.DeleteOneChecklistTemplate( dbChecklist.ChecklistTemplate );
                     await _manager.SaveAsync();
+
+                    //CODE HERE: API'de checklist offline ozelligini false yapan metod cagrilacak.
+                    var checklistPayload = new {
+                        offline = false
+                    };
+                    var checklistJson = System.Text.Json.JsonSerializer.Serialize( checklistPayload );
+                    var checklistContent = new StringContent( checklistJson, Encoding.UTF8, "application/json" );
+                    try {
+                        var response = await client.PutAsync( $"checklist/${checklistDto.Id}/updateOffline", checklistContent );
+                        response.EnsureSuccessStatusCode();
+                    }
+                    catch ( HttpRequestException ex ) {
+                        throw new Exception( ex.Message );
+                    }
 
                 } //end foreach
             }

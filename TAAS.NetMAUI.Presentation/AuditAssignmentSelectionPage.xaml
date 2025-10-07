@@ -36,6 +36,10 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="4*" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="4*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="4*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Entry 
                        Text="{Binding MainTaskEntry}"
@@ -49,7 +53,43 @@
                         HorizontalOptions="Fill"
                         VerticalOptions="Center"
                         Text="Get Audit Assignments"
-                        Command="{Binding GetAuditAssignmentsCommand}"
+                        Command="{Binding GetAuditAssignmentsByMainTaskCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                        BackgroundColor="SteelBlue"
+                        TextColor="White"
+                        CornerRadius="8" 
+                   />
+                    <Entry 
+                       Text="{Binding TaskTypeEntry}"
+                       Grid.Column="2"
+                       Placeholder="Task Type"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Center"
+                       MinimumWidthRequest="200"/>
+                    <Button 
+                        Grid.Column="3"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Center"
+                        Text="Get Audit Assignments"
+                        Command="{Binding GetAuditAssignmentsByTaskTypeCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                        BackgroundColor="SteelBlue"
+                        TextColor="White"
+                        CornerRadius="8" 
+                   />
+                    <Entry 
+                       Text="{Binding TaskEntry}"
+                       Grid.Column="4"
+                       Placeholder="Task"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Center"
+                       MinimumWidthRequest="200"/>
+                    <Button 
+                        Grid.Column="5"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Center"
+                        Text="Get Audit Assignments"
+                        Command="{Binding GetAuditAssignmentsByTaskCommand}"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
                         BackgroundColor="SteelBlue"
                         TextColor="White"

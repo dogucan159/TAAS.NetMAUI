@@ -36,6 +36,12 @@
                     </Label.GestureRecognizers>
                 </Label>
                 <Label Text=">" />
+                <Label IsVisible="{Binding IsNotSystemAudit}" Text="{Binding BreadcrumbText}" TextColor="Blue" TextDecorations="Underline" FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToAuditPageCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label IsVisible="{Binding IsNotSystemAudit}" Text=">" />
                 <Label Text="Checklists" FontAttributes="Bold" />
             </HorizontalStackLayout>
             <HorizontalStackLayout HorizontalOptions="Fill">

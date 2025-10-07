@@ -9,6 +9,8 @@ using TAAS.NetMAUI.Core.DTOs;
 namespace TAAS.NetMAUI.Business.Interfaces {
     public interface IApiService {
         Task<List<AuditAssignmentDto>?> PullAuditAssignmentsByMainTaskFromAPI( string code, string token );
+        Task<List<AuditAssignmentDto>?> PullAuditAssignmentsByTaskTypeFromAPI( string code, string token );
+        Task<List<AuditAssignmentDto>?> PullAuditAssignmentsByTaskFromAPI( string code, string token );
         Task<List<ChecklistDto>?> PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( long auditAssignmentId, long auditTypeId, string token );
         Task<ChecklistDto?> PullChecklistFromAPI( long id, string token );
         System.Threading.Tasks.Task SyncAuditAssignmentAsync( AuditAssignmentDto auditAssignmentDto );

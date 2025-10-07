@@ -12,7 +12,7 @@ using TAAS.NetMAUI.Shared;
 namespace TAAS.NetMAUI.Infrastructure.Data {
     public static class TaasDbInitializer {
 
-        public static void Initialize(IServiceProvider serviceProvider) {
+        public static void Initialize( IServiceProvider serviceProvider ) {
             var context = serviceProvider.GetRequiredService<TaasDbContext>();
             context.Database.Migrate();
 
@@ -24,6 +24,15 @@ namespace TAAS.NetMAUI.Infrastructure.Data {
                     LastName = "Kip",
                     IdentificationNumber = "56812118136",
                     Password = hashedPassword
+                } );
+                context.SaveChanges();
+            }
+
+            if ( !context.Settings.Any( b => b.Key == "API_Address" ) ) {
+                context.Settings.Add( new Setting {
+                    Id = 1,
+                    Key = "API_Address",
+                    Value = "https://dev-taas.hmb.gov.tr/backend/"
                 } );
                 context.SaveChanges();
             }

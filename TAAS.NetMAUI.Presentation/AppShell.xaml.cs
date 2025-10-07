@@ -16,17 +16,17 @@ namespace TAAS.NetMAUI.Presentation {
 
             //InitializeNavigation();
 
-            //var sessionUserId = Preferences.Get( "SessionUserId", -1L );
-            //FlyoutBehavior = sessionUserId > 0 ? FlyoutBehavior.Flyout : FlyoutBehavior.Disabled;
+            var sessionUserId = Preferences.Get( "SessionUserId", -1L );
+            FlyoutBehavior = sessionUserId > 0 ? FlyoutBehavior.Flyout : FlyoutBehavior.Disabled;
         }
 
         private async void OnSignOutClicked( object sender, EventArgs e ) {
             Preferences.Remove( "SessionUserId" );
-            //FlyoutBehavior = FlyoutBehavior.Disabled;
+            FlyoutBehavior = FlyoutBehavior.Disabled;
             await GoToAsync( nameof( LoginPage ) );
-            //Shell.SetBackButtonBehavior( Shell.Current.CurrentPage, new BackButtonBehavior {
-            //    IsVisible = false
-            //} );
+            Shell.SetBackButtonBehavior( Shell.Current.CurrentPage, new BackButtonBehavior {
+                IsVisible = false
+            } );
         }
 
         private async void InitializeNavigation() {

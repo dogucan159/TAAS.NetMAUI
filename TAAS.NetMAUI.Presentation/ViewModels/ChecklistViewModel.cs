@@ -21,8 +21,25 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         [ObservableProperty]
         private bool deleteAfterTransfer = true;
 
+        [ObservableProperty]
+        private string breadcrumbText = "";
+
+        [ObservableProperty]
+        private bool isNotSystemAudit = false;
+
         public ChecklistViewModel( IServiceManager manager ) {
             _manager = manager;
+
+            IsNotSystemAudit = NavigationContext.CurrentAuditAssignment?.TaskType.SystemAuditTypeId != NavigationContext.CurrentAuditType?.Id;
+
+            if ( IsNotSystemAudit )
+                BreadcrumbText = NavigationContext.CurrentAuditAssignment?.AuditAssignmentOperationAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true ?
+                    "Operation Audit Types" :
+                    NavigationContext.CurrentAuditAssignment?.AuditAssignmentFinancialAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true ?
+                    "Financial Audit Types" : "";
+
+
+
         }
 
         public async System.Threading.Tasks.Task LoadChecklistsAsync() {
@@ -81,6 +98,17 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         private async System.Threading.Tasks.Task NavigateToMainPage() {
             await Shell.Current.GoToAsync( "//MainPage" );
         }
+        [RelayCommand]
+        private async System.Threading.Tasks.Task NavigateToAuditPage() {
+
+            if ( NavigationContext.CurrentAuditAssignment?.AuditAssignmentOperationAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true )
+                await Shell.Current.GoToAsync( nameof( OperationAuditPage ) );
+            else if ( NavigationContext.CurrentAuditAssignment?.AuditAssignmentFinancialAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true ) 
+                await Shell.Current.GoToAsync( nameof( FinancialAuditPage ) );
+            
+
+        }
+
 
     }
 }

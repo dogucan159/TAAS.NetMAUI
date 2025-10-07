@@ -9,6 +9,7 @@ namespace TAAS.NetMAUI.Presentation {
             InitializeComponent();
             _serviceProvider = serviceProvider;
             TaasDbInitializer.Initialize( serviceProvider );
+            UserAppTheme = AppTheme.Dark;
 
         }
 
