@@ -783,7 +783,7 @@ namespace TAAS.NetMAUI.Business.Services {
                     var checklistJson = System.Text.Json.JsonSerializer.Serialize( checklistPayload );
                     var checklistContent = new StringContent( checklistJson, Encoding.UTF8, "application/json" );
                     try {
-                        var response = await client.PutAsync( $"checklist/${checklistDto.Id}/updateOffline", checklistContent );
+                        var response = await client.PutAsync( $"checklist/{checklistDto.Id}/updateOffline", checklistContent );
                         response.EnsureSuccessStatusCode();
                     }
                     catch ( HttpRequestException ex ) {
