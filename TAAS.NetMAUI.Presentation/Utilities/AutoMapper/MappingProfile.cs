@@ -14,7 +14,6 @@ namespace TAAS.NetMAUI.Presentation {
         public MappingProfile() {
             CreateMap<AuditorDto, Auditor>().ReverseMap();
             CreateMap<AuditAssignmentDto, AuditAssignment>().ReverseMap();
-            CreateMap<SettingDto, Setting>().ReverseMap();
             CreateMap<StrategyPlanPeriodDto, StrategyPlanPeriod>().ReverseMap();
             CreateMap<AuditPeriodDto, AuditPeriod>().ReverseMap();
             CreateMap<MainTaskDto, MainTask>().ReverseMap();

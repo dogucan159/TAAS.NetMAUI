@@ -8,7 +8,7 @@
     <ScrollView>
         <VerticalStackLayout Padding="5" Spacing="5">
             <HorizontalStackLayout Margin="10" Spacing="5">
-                <Label Text="Main Page" TextColor="Blue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label Text="Main Page" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToMainPageCommand}" />
                     </Label.GestureRecognizers>

@@ -20,7 +20,6 @@ namespace TAAS.NetMAUI.Infrastructure.Data {
         public DbSet<AuditAssignmentTemporaryAuditor> AuditAssignmentTemporaryAuditors { get; set; }
         public DbSet<AuditAssignmentOperationAuditType> AuditAssignmentOperationAuditTypes { get; set; }
         public DbSet<AuditAssignmentFinancialAuditType> AuditAssignmentFinancialAuditTypes { get; set; }
-        public DbSet<Setting> Settings { get; set; }
         public DbSet<StrategyPlanPeriod> StrategyPlanPeriods { get; set; }
         public DbSet<AuditPeriod> AuditPeriods { get; set; }
         public DbSet<ChecklistTemplate> ChecklistTemplates { get; set; }

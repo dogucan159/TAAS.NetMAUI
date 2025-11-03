@@ -13,7 +13,6 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
         private readonly TaasDbContext _context;
         private readonly IAuditorRepository _auditorRepository;
         private readonly IAuditAssignmentRepository _auditAssignmentRepository;
-        private readonly ISettingRepository _settingRepository;
         private readonly IStrategyPlanPeriodRepository _strategyPlanPeriodRepository;
         private readonly IAuditPeriodRepository _auditPeriodRepository;
         private readonly IMainTaskRepository _mainTaskRepository;
@@ -43,7 +42,6 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
         public RepositoryManager( TaasDbContext context,
             IAuditorRepository auditorRepository,
             IAuditAssignmentRepository auditAssignmentRepository,
-            ISettingRepository settingRepository,
             IStrategyPlanPeriodRepository strategyPlanPeriodRepository,
             IAuditPeriodRepository auditPeriodRepository,
             IMainTaskRepository mainTaskRepository,
@@ -71,7 +69,6 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
             _context = context;
             _auditorRepository = auditorRepository;
             _auditAssignmentRepository = auditAssignmentRepository;
-            _settingRepository = settingRepository;
             _strategyPlanPeriodRepository = strategyPlanPeriodRepository;
             _auditPeriodRepository = auditPeriodRepository;
             _mainTaskRepository = mainTaskRepository;
@@ -100,8 +97,6 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
         public IAuditorRepository Auditor => _auditorRepository;
 
         public IAuditAssignmentRepository AuditAssignment => _auditAssignmentRepository;
-
-        public ISettingRepository Setting => _settingRepository;
 
         public IStrategyPlanPeriodRepository StrategyPlanPeriod => _strategyPlanPeriodRepository;
 

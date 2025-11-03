@@ -27,16 +27,6 @@ namespace TAAS.NetMAUI.Infrastructure.Data {
                 } );
                 context.SaveChanges();
             }
-
-            if ( !context.Settings.Any( b => b.Key == "API_Address" ) ) {
-                context.Settings.Add( new Setting {
-                    Id = 1,
-                    Key = "API_Address",
-                    Value = "https://dev-taas.hmb.gov.tr/backend/"
-                } );
-                context.SaveChanges();
-            }
-
         }
     }
 }

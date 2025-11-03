@@ -563,25 +563,6 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                     b.ToTable("MainTasks");
                 });
 
-            modelBuilder.Entity("TAAS.NetMAUI.Core.Entities.Setting", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Settings");
-                });
-
             modelBuilder.Entity("TAAS.NetMAUI.Core.Entities.SpecificFunction", b =>
                 {
                     b.Property<long>("Id")

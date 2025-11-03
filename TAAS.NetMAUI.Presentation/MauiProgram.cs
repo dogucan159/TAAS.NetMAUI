@@ -7,6 +7,7 @@ using TAAS.NetMAUI.Infrastructure;
 using TAAS.NetMAUI.Infrastructure.Data;
 using TAAS.NetMAUI.Infrastructure.Interfaces;
 using TAAS.NetMAUI.Infrastructure.Repositories;
+using TAAS.NetMAUI.Presentation.Utilities;
 using TAAS.NetMAUI.Presentation.ViewModels;
 
 namespace TAAS.NetMAUI.Presentation {
@@ -31,11 +32,11 @@ namespace TAAS.NetMAUI.Presentation {
 
             builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
             builder.Services.AddScoped<IServiceManager, ServiceManager>();
+            builder.Services.AddScoped<ITokenUtility, TokenUtility>();
             builder.Services.AddAutoMapper( typeof( MauiProgram ) );
 
             builder.Services.AddScoped<IAuditorRepository, AuditorRepository>();
             builder.Services.AddScoped<IAuditAssignmentRepository, AuditAssignmentRepository>();
-            builder.Services.AddScoped<ISettingRepository, SettingRepository>();
             builder.Services.AddScoped<IStrategyPlanPeriodRepository, StrategyPlanPeriodRepository>();
             builder.Services.AddScoped<IAuditPeriodRepository, AuditPeriodRepository>();
             builder.Services.AddScoped<IMainTaskRepository, MainTaskRepository>();

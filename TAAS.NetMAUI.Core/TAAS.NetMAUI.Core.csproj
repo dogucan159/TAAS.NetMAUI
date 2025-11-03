@@ -5,6 +5,7 @@
     <UseWindowsSDK>true</UseWindowsSDK>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Release-Test;Release-Prod;Debug-Test</Configurations>
   </PropertyGroup>
 
 </Project>

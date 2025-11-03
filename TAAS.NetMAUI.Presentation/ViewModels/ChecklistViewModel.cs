@@ -7,10 +7,12 @@ using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Presentation.Data;
 using TAAS.NetMAUI.Presentation.Models;
+using TAAS.NetMAUI.Presentation.Utilities;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
     public partial class ChecklistViewModel : ObservableObject {
         private readonly IServiceManager _manager;
+        private readonly ITokenUtility _tokenUtility;
 
         [ObservableProperty]
         private ObservableCollection<ChecklistItem> checklists = new ObservableCollection<ChecklistItem>();
@@ -27,8 +29,9 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         [ObservableProperty]
         private bool isNotSystemAudit = false;
 
-        public ChecklistViewModel( IServiceManager manager ) {
+        public ChecklistViewModel( IServiceManager manager, ITokenUtility tokenUtility ) {
             _manager = manager;
+            _tokenUtility = tokenUtility;
 
             IsNotSystemAudit = NavigationContext.CurrentAuditAssignment?.TaskType.SystemAuditTypeId != NavigationContext.CurrentAuditType?.Id;
 
@@ -37,9 +40,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                     "Operation Audit Types" :
                     NavigationContext.CurrentAuditAssignment?.AuditAssignmentFinancialAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true ?
                     "Financial Audit Types" : "";
-
-
-
+            
         }
 
         public async System.Threading.Tasks.Task LoadChecklistsAsync() {
@@ -72,9 +73,10 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                         NavigationContext.CurrentAuditType.Id, true );
 
                     if ( checklists.Any() ) {
-                        var sessionUserId = Preferences.Get( "SessionUserId", -1L );
-                        var sessionUser = await _manager.AuditorService.GetById( sessionUserId, false );
-                        await _manager.ApiService.TransferChecklistsToLive( checklists, sessionUser.AccessToken );
+
+                        string token = await _tokenUtility.GetToken();
+
+                        await _manager.ApiService.TransferChecklistsToLive( checklists, token );
                         await Shell.Current.DisplayAlert( "Success", "Unsynced files transferred to live!", "OK" );
 
                         await LoadChecklistsAsync();

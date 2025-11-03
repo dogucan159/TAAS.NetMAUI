@@ -11,7 +11,7 @@ using TAAS.NetMAUI.Infrastructure.Data;
 namespace TAAS.NetMAUI.Infrastructure.Migrations
 {
     [DbContext(typeof(TaasDbContext))]
-    [Migration("20250923193300_InitialCreate")]
+    [Migration("20251030060322_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -564,25 +564,6 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MainTasks");
-                });
-
-            modelBuilder.Entity("TAAS.NetMAUI.Core.Entities.Setting", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("TAAS.NetMAUI.Core.Entities.SpecificFunction", b =>

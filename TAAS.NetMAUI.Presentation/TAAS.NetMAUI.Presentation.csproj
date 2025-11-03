@@ -48,6 +48,7 @@
 		<AppInstallerUri>C:\Users\doguc\OneDrive\Masaüstü\TaasInstaller</AppInstallerUri>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<PackageCertificateThumbprint>54A9459BDAE6ACCAA3C9722BE7AF8486AF394976</PackageCertificateThumbprint>
+		<Configurations>Debug;Release;Release-Test;Release-Prod;Debug-Test</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -30,13 +30,13 @@
                     HorizontalOptions="Center" />
             <Label Text="Checklists" FontAttributes="Bold" FontSize="Medium" />
             <HorizontalStackLayout Margin="10" Spacing="5">
-                <Label Text="Main Page" TextColor="Blue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label Text="Main Page" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToMainPageCommand}" />
                     </Label.GestureRecognizers>
                 </Label>
                 <Label Text=">" />
-                <Label IsVisible="{Binding IsNotSystemAudit}" Text="{Binding BreadcrumbText}" TextColor="Blue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label IsVisible="{Binding IsNotSystemAudit}" Text="{Binding BreadcrumbText}" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToAuditPageCommand}" />
                     </Label.GestureRecognizers>

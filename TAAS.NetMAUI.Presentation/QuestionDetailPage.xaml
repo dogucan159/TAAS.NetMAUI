@@ -15,19 +15,19 @@
 
             <VerticalStackLayout Padding="5" Spacing="5" Grid.Row="0" >
                 <HorizontalStackLayout Margin="10" Spacing="5">
-                    <Label Text="Main Page" TextColor="Blue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label Text="Main Page" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnMainPageTapped" />
                         </Label.GestureRecognizers>
                     </Label>
                     <Label Text=">" />
-                    <Label Text="Checklists" TextColor="Blue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label Text="Checklists" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnChecklistPageTapped" />
                         </Label.GestureRecognizers>
                     </Label>
                     <Label Text=">" />
-                    <Label Text="Checklist Detail" TextColor="Blue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label Text="Checklist Detail" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnChecklistDetailPageTapped" />
                         </Label.GestureRecognizers>

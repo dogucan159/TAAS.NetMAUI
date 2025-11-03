@@ -9,7 +9,6 @@ namespace TAAS.NetMAUI.Infrastructure.Interfaces {
     public interface IRepositoryManager {
         IAuditorRepository Auditor { get; }
         IAuditAssignmentRepository AuditAssignment { get; }
-        ISettingRepository Setting { get; }
         IStrategyPlanPeriodRepository StrategyPlanPeriod { get; }
         IAuditPeriodRepository AuditPeriod { get; }
         IMainTaskRepository MainTask { get; }

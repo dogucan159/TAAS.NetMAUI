@@ -5,6 +5,33 @@
     <UseWindowsSDK>true</UseWindowsSDK>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Release-Test;Release-Prod;Debug-Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Test|net9.0|AnyCPU'">
+    <Optimize>True</Optimize>
+    <DefineConstants>$(DefineConstants);RELEASE_TEST</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Test|net9.0-windows10.0.19041.0|AnyCPU'">
+    <Optimize>True</Optimize>
+    <DefineConstants>$(DefineConstants);RELEASE_TEST</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Prod|net9.0|AnyCPU'">
+    <DefineConstants>$(DefineConstants);RELEASE_PROD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Prod|net9.0-windows10.0.19041.0|AnyCPU'">
+    <DefineConstants>$(DefineConstants);RELEASE_PROD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug-Test|net9.0|AnyCPU'">
+    <DefineConstants>$(DefineConstants);DEBUG_TEST</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug-Test|net9.0-windows10.0.19041.0|AnyCPU'">
+    <DefineConstants>$(DefineConstants);DEBUG_TEST</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

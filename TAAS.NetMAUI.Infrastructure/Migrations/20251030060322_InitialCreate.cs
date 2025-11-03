@@ -116,20 +116,6 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Settings",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Key = table.Column<string>(type: "TEXT", nullable: false),
-                    Value = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Settings", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SpecificFunctions",
                 columns: table => new
                 {
@@ -840,9 +826,6 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ChecklistTaasFiles");
-
-            migrationBuilder.DropTable(
-                name: "Settings");
 
             migrationBuilder.DropTable(
                 name: "ChecklistDetails");
