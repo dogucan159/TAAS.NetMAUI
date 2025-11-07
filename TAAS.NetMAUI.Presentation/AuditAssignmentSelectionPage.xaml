@@ -35,10 +35,9 @@
                 <Grid HorizontalOptions="Fill" Margin="20" ColumnSpacing="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="4*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="4*" />
                         <ColumnDefinition Width="4*" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="4*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Entry 
@@ -48,21 +47,17 @@
                        HorizontalOptions="Fill"
                        VerticalOptions="Center"
                        MinimumWidthRequest="200"/>
-                    <Button 
-                        Grid.Column="1"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Center"
-                        Text="Get Audit Assignments"
-                        Command="{Binding GetAuditAssignmentsByMainTaskCommand}"
-                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                        BackgroundColor="SteelBlue"
-                        TextColor="White"
-                        CornerRadius="8" 
-                   />
                     <Entry 
                        Text="{Binding TaskTypeEntry}"
-                       Grid.Column="2"
+                       Grid.Column="1"
                        Placeholder="Task Type"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Center"
+                       MinimumWidthRequest="200"/>
+                    <Entry 
+                       Text="{Binding TaskEntry}"
+                       Grid.Column="2"
+                       Placeholder="Task"
                        HorizontalOptions="Fill"
                        VerticalOptions="Center"
                        MinimumWidthRequest="200"/>
@@ -71,34 +66,33 @@
                         HorizontalOptions="Fill"
                         VerticalOptions="Center"
                         Text="Get Audit Assignments"
-                        Command="{Binding GetAuditAssignmentsByTaskTypeCommand}"
+                        Command="{Binding GetAuditAssignmentsCommand}"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
                         BackgroundColor="SteelBlue"
                         TextColor="White"
                         CornerRadius="8" 
                    />
-                    <Entry 
-                       Text="{Binding TaskEntry}"
-                       Grid.Column="4"
-                       Placeholder="Task"
-                       HorizontalOptions="Fill"
-                       VerticalOptions="Center"
-                       MinimumWidthRequest="200"/>
                     <Button 
-                        Grid.Column="5"
+                        Grid.Column="4"
                         HorizontalOptions="Fill"
                         VerticalOptions="Center"
-                        Text="Get Audit Assignments"
-                        Command="{Binding GetAuditAssignmentsByTaskCommand}"
+                        Text="Clear"
+                        Command="{Binding ClearCommand}"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                        BackgroundColor="SteelBlue"
+                        BackgroundColor="DarkKhaki"
                         TextColor="White"
                         CornerRadius="8" 
-                   />
+                   />                    
                 </Grid>
             </HorizontalStackLayout>
 
             <CollectionView ItemsSource="{Binding AuditAssignments}" EmptyView="No data to display">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical"
+                        Span="3"
+                        VerticalItemSpacing="10"
+                        HorizontalItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">

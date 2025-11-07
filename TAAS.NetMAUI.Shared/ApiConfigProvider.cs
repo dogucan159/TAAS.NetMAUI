@@ -6,16 +6,24 @@ using System.Threading.Tasks;
 
 namespace TAAS.NetMAUI.Shared {
     public static class ApiConfigProvider {
-        public static String GetAuthSettings() {
+        public static EndpointSettings GetEndpointSettings() {
+            var rootAddress = "";
+            var controllerName = "";
 #if DEBUG || RELEASE
-            return "https://dev-taas.hmb.gov.tr/backend/";
+            rootAddress= "https://dev-taas.hmb.gov.tr/backend/";
 #elif DEBUG_TEST || RELEASE_TEST
-            return "https://test-taas.hmb.gov.tr/gateway/offlinetaas/";
+            rootAddress = "https://test-taas.hmb.gov.tr/gateway/offlinetaas/";
+            controllerName = "taas-offline/";
 #elif RELEASE_PROD
-            return "https://release-prod.example.com/api/";
+            rootAddress= "https://release-prod.example.com/api/taas-offline";
 #else
-            return null;
+            rootAddress = null;
 #endif
+            return new EndpointSettings {
+                RootAddress = rootAddress,
+                ControllerName = controllerName
+            };
+
         }
     }
 }

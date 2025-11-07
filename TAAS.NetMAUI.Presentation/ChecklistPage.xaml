@@ -91,6 +91,12 @@
             <VerticalStackLayout Padding="5" Spacing="5">
                 <Label Text="Checklists" FontAttributes="Bold" FontSize="Medium" />
                 <CollectionView ItemsSource="{Binding Checklists}" EmptyView="No data to display">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                        Span="3"
+                        VerticalItemSpacing="10"
+                        HorizontalItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">

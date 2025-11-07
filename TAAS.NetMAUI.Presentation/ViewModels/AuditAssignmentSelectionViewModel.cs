@@ -40,32 +40,33 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         }
 
         [RelayCommand]
-        public async System.Threading.Tasks.Task GetAuditAssignmentsByMainTaskAsync() {
+        public async System.Threading.Tasks.Task GetAuditAssignments() {
             if ( IsBusy )
                 return;
 
+            if ( String.IsNullOrEmpty( MainTaskEntry ) && String.IsNullOrEmpty( TaskTypeEntry ) && String.IsNullOrWhiteSpace( TaskEntry ) ) {
+                await Shell.Current.DisplayAlert( "Error", "Please enter at least one of the main task, task type and task code.", "OK" );
+                return;
+            }
+
             try {
-                if ( !String.IsNullOrWhiteSpace( MainTaskEntry ) ) {
-                    IsBusy = true;
-                    AuditAssignments.Clear();
-
-                    string token = await _tokenUtility.GetToken();
-
-                    List<AuditAssignmentDto>? apiAuditAssignments = await _manager.ApiService.PullAuditAssignmentsByMainTaskFromAPI( MainTaskEntry, token );
-                    if ( apiAuditAssignments != null && apiAuditAssignments.Count > 0 ) {
-                        var dbAuditAssignments = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
-                        if ( dbAuditAssignments != null && dbAuditAssignments.Count > 0 )
-                            AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments.Where( a => !dbAuditAssignments.Any( d => d.Id == a.Id ) ) );
-                        else
-                            AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments );
-                    }
-                    await Shell.Current.DisplayAlert( "Success", "Data pulled successfully!", "OK" );
+                IsBusy = true;
+                AuditAssignments.Clear();
+                string token = await _tokenUtility.GetToken();
+                var sessionUserId = Preferences.Get( "SessionUserId", -1L );
+                var sessionUser = await _manager.AuditorService.GetById( sessionUserId, false );
+                List<AuditAssignmentDto>? apiAuditAssignments = await _manager.ApiService.PullAuditAssignments( MainTaskEntry, TaskTypeEntry, TaskEntry, token, sessionUser );
+                if ( apiAuditAssignments != null && apiAuditAssignments.Count > 0 ) {
+                    var dbAuditAssignments = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
+                    if ( dbAuditAssignments != null && dbAuditAssignments.Count > 0 )
+                        AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments.Where( a => !dbAuditAssignments.Any( d => d.Id == a.Id ) ) );
+                    else
+                        AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments );
                 }
-                else
-                    await Shell.Current.DisplayAlert( "Error", "Please enter a main task code.", "OK" );
+                await Shell.Current.DisplayAlert( "Success", "Data pulled successfully!", "OK" );
             }
             catch ( Exception ex ) {
-                Debug.WriteLine( $"[GetAuditAssignmentsByMainTaskAsync] ERROR: {ex.Message}" );
+                Debug.WriteLine( $"[GetAuditAssignments] ERROR: {ex.Message}" );
                 await Shell.Current.DisplayAlert( "Error", "Failed to pull data.", "OK" );
             }
             finally {
@@ -74,70 +75,12 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         }
 
         [RelayCommand]
-        public async System.Threading.Tasks.Task GetAuditAssignmentsByTaskTypeAsync() {
+        public async System.Threading.Tasks.Task Clear() {
             if ( IsBusy )
                 return;
-
-            try {
-                if ( !String.IsNullOrWhiteSpace( TaskTypeEntry ) ) {
-                    IsBusy = true;
-                    AuditAssignments.Clear();
-
-                    string token = await _tokenUtility.GetToken();
-
-                    List<AuditAssignmentDto>? apiAuditAssignments = await _manager.ApiService.PullAuditAssignmentsByTaskTypeFromAPI( TaskTypeEntry, token );
-                    if ( apiAuditAssignments != null && apiAuditAssignments.Count > 0 ) {
-                        var dbAuditAssignments = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
-                        if ( dbAuditAssignments != null && dbAuditAssignments.Count > 0 )
-                            AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments.Where( a => !dbAuditAssignments.Any( d => d.Id == a.Id ) ) );
-                        else
-                            AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments );
-                    }
-                    await Shell.Current.DisplayAlert( "Success", "Data pulled successfully!", "OK" );
-                }
-                else
-                    await Shell.Current.DisplayAlert( "Error", "Please enter a task type code.", "OK" );
-            }
-            catch ( Exception ex ) {
-                Debug.WriteLine( $"[GetAuditAssignmentsByTaskTypeAsync] ERROR: {ex.Message}" );
-                await Shell.Current.DisplayAlert( "Error", "Failed to pull data.", "OK" );
-            }
-            finally {
-                IsBusy = false;
-            }
-        }
-
-        [RelayCommand]
-        public async System.Threading.Tasks.Task GetAuditAssignmentsByTaskAsync() {
-            if ( IsBusy )
-                return;
-
-            try {
-                if ( !String.IsNullOrWhiteSpace( TaskEntry ) ) {
-                    IsBusy = true;
-                    AuditAssignments.Clear();
-                    string token = await _tokenUtility.GetToken();
-
-                    List<AuditAssignmentDto>? apiAuditAssignments = await _manager.ApiService.PullAuditAssignmentsByTaskFromAPI( TaskEntry, token );
-                    if ( apiAuditAssignments != null && apiAuditAssignments.Count > 0 ) {
-                        var dbAuditAssignments = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
-                        if ( dbAuditAssignments != null && dbAuditAssignments.Count > 0 )
-                            AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments.Where( a => !dbAuditAssignments.Any( d => d.Id == a.Id ) ) );
-                        else
-                            AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments );
-                    }
-                    await Shell.Current.DisplayAlert( "Success", "Data pulled successfully!", "OK" );
-                }
-                else
-                    await Shell.Current.DisplayAlert( "Error", "Please enter a task code.", "OK" );
-            }
-            catch ( Exception ex ) {
-                Debug.WriteLine( $"[GetAuditAssignmentsByTaskAsync] ERROR: {ex.Message}" );
-                await Shell.Current.DisplayAlert( "Error", "Failed to pull data.", "OK" );
-            }
-            finally {
-                IsBusy = false;
-            }
+            MainTaskEntry = "";
+            TaskTypeEntry = "";
+            TaskEntry = "";
         }
 
         public ICommand SelectAuditAssignmentCommand => new Command<AuditAssignmentDto>( auditAssignment => {

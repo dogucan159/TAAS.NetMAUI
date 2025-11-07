@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,35 +27,36 @@ namespace TAAS.NetMAUI.Business.Services {
 
         private readonly IRepositoryManager _manager;
         private readonly IMapper _mapper;
-        private readonly String _apiAddress;
+        private readonly EndpointSettings _endpointSettings;
 
         public ApiService( IRepositoryManager manager, IMapper mapper ) {
             _manager = manager;
             _mapper = mapper;
-            _apiAddress = ApiConfigProvider.GetAuthSettings() ?? String.Empty;
+            _endpointSettings = ApiConfigProvider.GetEndpointSettings();
+
         }
 
-        public async Task<List<AuditAssignmentDto>?> PullAuditAssignmentsByMainTaskFromAPI( string code, string token ) {
-
+        public async Task<List<AuditAssignmentDto>?> PullAuditAssignments( string mainTask, string taskType, string task, string token, AuditorDto currentAuditor ) {
             try {
 
                 //https://dev-taas.hmb.gov.tr/backend/
                 HttpClient client = new() {
-                    BaseAddress = new Uri( _apiAddress )
+                    BaseAddress = new Uri( _endpointSettings.RootAddress )
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
 
                 var payload = new {
-                    ilike = new { mainTaskCode = code },
+                    ilike = new { mainTaskCode = mainTask, taskTypeCode = taskType, taskCode = task },
                     page = 0,
-                    size = 20
+                    size = 20,
+                    userIdentity = currentAuditor.IdentificationNumber
                 };
 
                 var json = System.Text.Json.JsonSerializer.Serialize( payload );
                 var content = new StringContent( json, Encoding.UTF8, "application/json" );
                 List<AuditAssignmentDto>? result = null;
                 try {
-                    var response = await client.PostAsync( "taas-offline/audit-assignment/query-info", content );
+                    var response = await client.PostAsync( $"{_endpointSettings.ControllerName}audit-assignment/queryInfo", content );
                     response.EnsureSuccessStatusCode();
                     var auditAssignmentsJsonString = await response.Content.ReadAsStringAsync();
                     result = JsonConvert.DeserializeObject<RootObject>( auditAssignmentsJsonString )?.Content;
@@ -68,89 +70,13 @@ namespace TAAS.NetMAUI.Business.Services {
             catch ( Exception ex ) {
                 throw new Exception( ex.Message );
             }
-
-
-        }
-
-        public async Task<List<AuditAssignmentDto>?> PullAuditAssignmentsByTaskTypeFromAPI( string code, string token ) {
-
-            try {
-
-                //https://dev-taas.hmb.gov.tr/backend/
-                HttpClient client = new() {
-                    BaseAddress = new Uri( _apiAddress )
-                };
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
-
-                var payload = new {
-                    ilike = new { taskTypeCode = code },
-                    page = 0,
-                    size = 20
-                };
-
-                var json = System.Text.Json.JsonSerializer.Serialize( payload );
-                var content = new StringContent( json, Encoding.UTF8, "application/json" );
-                List<AuditAssignmentDto>? result = null;
-                try {
-                    var response = await client.PostAsync( "taas-offline/audit-assignment/query-info", content );
-                    response.EnsureSuccessStatusCode();
-                    var auditAssignmentsJsonString = await response.Content.ReadAsStringAsync();
-                    result = JsonConvert.DeserializeObject<RootObject>( auditAssignmentsJsonString )?.Content;
-                }
-                catch ( HttpRequestException ex ) {
-                    throw new Exception( ex.Message );
-                }
-
-                return result;
-            }
-            catch ( Exception ex ) {
-                throw new Exception( ex.Message );
-            }
-
-
-        }
-
-        public async Task<List<AuditAssignmentDto>?> PullAuditAssignmentsByTaskFromAPI( string code, string token ) {
-
-            try {
-                //https://dev-taas.hmb.gov.tr/backend/
-                HttpClient client = new() {
-                    BaseAddress = new Uri( _apiAddress )
-                };
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
-
-                var payload = new {
-                    ilike = new { taskCode = code },
-                    page = 0,
-                    size = 20
-                };
-
-                var json = System.Text.Json.JsonSerializer.Serialize( payload );
-                var content = new StringContent( json, Encoding.UTF8, "application/json" );
-                List<AuditAssignmentDto>? result = null;
-                try {
-                    var response = await client.PostAsync( "taas-offline/audit-assignment/query-info", content );
-                    response.EnsureSuccessStatusCode();
-                    var auditAssignmentsJsonString = await response.Content.ReadAsStringAsync();
-                    result = JsonConvert.DeserializeObject<RootObject>( auditAssignmentsJsonString )?.Content;
-                }
-                catch ( HttpRequestException ex ) {
-                    throw new Exception( ex.Message );
-                }
-
-                return result;
-            }
-            catch ( Exception ex ) {
-                throw new Exception( ex.Message );
-            }
-
 
         }
 
         public async Task<List<ChecklistDto>?> PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( long auditAssignmentId, long auditTypeId, string token ) {
 
             HttpClient client = new() {
-                BaseAddress = new Uri( _apiAddress )
+                BaseAddress = new Uri( _endpointSettings.RootAddress )
             };
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
 
@@ -164,7 +90,7 @@ namespace TAAS.NetMAUI.Business.Services {
             var content = new StringContent( json, Encoding.UTF8, "application/json" );
             List<ChecklistDto>? result = null;
             try {
-                var response = await client.PostAsync( "taas-offline/checklist/getByAuditAssignmentIdAndAuditTypeId", content );
+                var response = await client.PostAsync( $"{_endpointSettings.ControllerName}checklist/getByAuditAssignmentIdAndAuditTypeId", content );
                 response.EnsureSuccessStatusCode();
                 var checklistsJsonString = await response.Content.ReadAsStringAsync();
                 result = JsonConvert.DeserializeObject<List<ChecklistDto>>( checklistsJsonString );
@@ -182,12 +108,12 @@ namespace TAAS.NetMAUI.Business.Services {
             try {
                 //https://dev-taas.hmb.gov.tr/backend/
                 HttpClient client = new() {
-                    BaseAddress = new Uri( _apiAddress )
+                    BaseAddress = new Uri( _endpointSettings.RootAddress )
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
                 ChecklistDto? result = null;
                 try {
-                    var response = await client.GetAsync( $"taas-offline/checklist/{id}" );
+                    var response = await client.GetAsync( $"{_endpointSettings.ControllerName}checklist?id={id}" );
                     response.EnsureSuccessStatusCode();
                     var checklistJsonString = await response.Content.ReadAsStringAsync();
                     result = JsonConvert.DeserializeObject<ChecklistDto>( checklistJsonString );
@@ -368,7 +294,7 @@ namespace TAAS.NetMAUI.Business.Services {
         public async System.Threading.Tasks.Task SyncChecklistAsync( ChecklistDto checklistDto, string token ) {
             try {
                 HttpClient client = new() {
-                    BaseAddress = new Uri( _apiAddress )
+                    BaseAddress = new Uri( _endpointSettings.RootAddress )
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
 
@@ -439,7 +365,7 @@ namespace TAAS.NetMAUI.Business.Services {
                         else {
                             //taas-file/getWithFileData
                             try {
-                                var response = await client.GetAsync( $"taas-offline/taas-file/get-with-file-data/{taasFileDto.Id}" );
+                                var response = await client.GetAsync( $"{_endpointSettings.ControllerName}taas-file/get-with-file-data/{taasFileDto.Id}" );
                                 response.EnsureSuccessStatusCode();
                                 var taasFileJsonString = await response.Content.ReadAsStringAsync();
                                 TaasFileDto? taasFileResult = JsonConvert.DeserializeObject<TaasFileDto>( taasFileJsonString );
@@ -509,7 +435,7 @@ namespace TAAS.NetMAUI.Business.Services {
                 var checklistJson = System.Text.Json.JsonSerializer.Serialize( checklistPayload );
                 var checklistContent = new StringContent( checklistJson, Encoding.UTF8, "application/json" );
                 try {
-                    var response = await client.PutAsync( $"taas-offline/checklist/{checklist.Id}/updateOffline", checklistContent );
+                    var response = await client.PutAsync( $"{_endpointSettings.ControllerName}checklist/{checklist.Id}/updateOffline", checklistContent );
                     response.EnsureSuccessStatusCode();
                 }
                 catch ( HttpRequestException ex ) {
@@ -526,7 +452,7 @@ namespace TAAS.NetMAUI.Business.Services {
             try {
                 //https://dev-taas.hmb.gov.tr/backend/
                 HttpClient client = new() {
-                    BaseAddress = new Uri( _apiAddress )
+                    BaseAddress = new Uri( _endpointSettings.RootAddress )
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
 
@@ -551,7 +477,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                 var taasFileContent = new StringContent( taasFileJson, Encoding.UTF8, "application/json" );
                                 TaasFileDto? result = null;
                                 try {
-                                    var response = await client.PostAsync( "taas-offline/taas-file/create-with-file-data", taasFileContent );
+                                    var response = await client.PostAsync( $"{_endpointSettings.ControllerName}taas-file/create-with-file-data", taasFileContent );
                                     response.EnsureSuccessStatusCode();
                                     var taasFileJsonString = await response.Content.ReadAsStringAsync();
                                     result = JsonConvert.DeserializeObject<TaasFileDto>( taasFileJsonString );
@@ -580,7 +506,7 @@ namespace TAAS.NetMAUI.Business.Services {
                             var checklistTaasFileJson = System.Text.Json.JsonSerializer.Serialize( checklistTaasFilePayload );
                             var checklistTaasFileContent = new StringContent( checklistTaasFileJson, Encoding.UTF8, "application/json" );
                             try {
-                                var response = await client.PutAsync( $"taas-offline/checklist/update-taas-file/{checklistDto.Id}", checklistTaasFileContent );
+                                var response = await client.PutAsync( $"{_endpointSettings.ControllerName}checklist/update-taas-file/{checklistDto.Id}", checklistTaasFileContent );
                                 response.EnsureSuccessStatusCode();
 
                                 foreach ( var createdChecklistTaasFile in createdChecklistTaasFiles ) {
@@ -609,7 +535,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                 var checklistTaasFileJson = System.Text.Json.JsonSerializer.Serialize( checklistTaasFilePayload );
                                 var checklistTaasFileContent = new StringContent( checklistTaasFileJson, Encoding.UTF8, "application/json" );
                                 try {
-                                    var response = await client.PostAsync( $"taas-offline/checklist/deleteTaasFile", checklistTaasFileContent );
+                                    var response = await client.PostAsync( $"{_endpointSettings.ControllerName}checklist/deleteTaasFile", checklistTaasFileContent );
                                     response.EnsureSuccessStatusCode();
                                 }
                                 catch ( HttpRequestException ex ) {
@@ -633,7 +559,7 @@ namespace TAAS.NetMAUI.Business.Services {
                             var checklistDetailJson = System.Text.Json.JsonSerializer.Serialize( checklistDetailPayload );
                             var checklistDetailContent = new StringContent( checklistDetailJson, Encoding.UTF8, "application/json" );
                             try {
-                                var response = await client.PutAsync( $"taas-offline/checklist-detail/{checklistDetail.Id}", checklistDetailContent );
+                                var response = await client.PutAsync( $"{_endpointSettings.ControllerName}checklist-detail/{checklistDetail.Id}", checklistDetailContent );
                                 response.EnsureSuccessStatusCode();
                             }
                             catch ( HttpRequestException ex ) {
@@ -662,7 +588,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                     var checklistDetailTaasFileJson = System.Text.Json.JsonSerializer.Serialize( checklistDetailTaasFilePayload );
                                     var checklistDetailTaasFileContent = new StringContent( checklistDetailTaasFileJson, Encoding.UTF8, "application/json" );
                                     try {
-                                        var response = await client.PutAsync( $"taas-offline/checklist-detail/update-detailed-taas-file/{checklistDetail.Id}", checklistDetailTaasFileContent );
+                                        var response = await client.PutAsync( $"{_endpointSettings.ControllerName}checklist-detail/update-detailed-taas-file/{checklistDetail.Id}", checklistDetailTaasFileContent );
                                         response.EnsureSuccessStatusCode();
 
                                         //Synched
@@ -690,7 +616,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                         var checklistDetailTaasFileJson = System.Text.Json.JsonSerializer.Serialize( checklistDetailTaasFilePayload );
                                         var checklistDetailTaasFileContent = new StringContent( checklistDetailTaasFileJson, Encoding.UTF8, "application/json" );
                                         try {
-                                            var response = await client.PostAsync( $"checklist-detail/deleteTaasFile", checklistDetailTaasFileContent );
+                                            var response = await client.PostAsync( $"{_endpointSettings.ControllerName}checklist-detail/deleteTaasFile", checklistDetailTaasFileContent );
                                             response.EnsureSuccessStatusCode();
                                         }
                                         catch ( HttpRequestException ex ) {
@@ -715,7 +641,7 @@ namespace TAAS.NetMAUI.Business.Services {
                             var checklistHeaderJson = System.Text.Json.JsonSerializer.Serialize( checklistHeaderPayload );
                             var checklistHeaderContent = new StringContent( checklistHeaderJson, Encoding.UTF8, "application/json" );
                             try {
-                                var response = await client.PutAsync( $"taas-offline/checklist-header/{checklistHeader.Id}", checklistHeaderContent );
+                                var response = await client.PutAsync( $"{_endpointSettings.ControllerName}checklist-header/{checklistHeader.Id}", checklistHeaderContent );
                                 response.EnsureSuccessStatusCode();
                             }
                             catch ( HttpRequestException ex ) {
@@ -737,7 +663,7 @@ namespace TAAS.NetMAUI.Business.Services {
                     var checklistJson = System.Text.Json.JsonSerializer.Serialize( checklistPayload );
                     var checklistContent = new StringContent( checklistJson, Encoding.UTF8, "application/json" );
                     try {
-                        var response = await client.PutAsync( $"taas-offline/checklist/{checklistDto.Id}/updateOffline", checklistContent );
+                        var response = await client.PutAsync( $"{_endpointSettings.ControllerName}checklist/{checklistDto.Id}/updateOffline", checklistContent );
                         response.EnsureSuccessStatusCode();
                     }
                     catch ( HttpRequestException ex ) {
