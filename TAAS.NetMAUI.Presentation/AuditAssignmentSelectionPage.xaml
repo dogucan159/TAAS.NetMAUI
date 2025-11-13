@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TAAS.NetMAUI.Presentation"    
              x:Class="TAAS.NetMAUI.Presentation.AuditAssignmentSelectionPage"
              xmlns:vm="clr-namespace:TAAS.NetMAUI.Presentation.ViewModels"
-             xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters"
-             Title="Audit Assignments from API">
+             xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters">
+
+    <Shell.TitleView>
+        <Label Text="Audit Assignments" Style="{StaticResource ShellTitleLabelStyle}" />
+    </Shell.TitleView>
+    
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
             <converters:BoolToColorMultiConverter x:Key="BoolToColorMultiConverter" />
-            <converters:MainTaskToStringConverter x:Key="MainTaskToStringConverter" />
-            <converters:TaskTypeToStringConverter x:Key="TaskTypeToStringConverter" />
-            <converters:TaskToStringConverter x:Key="TaskToStringConverter" />
-            <converters:StrategyPlanPeriodToStringConverter x:Key="StrategyPlanPeriodToStringConverter" />
-            <converters:AuditPeriodToStringConverter x:Key="AuditPeriodToStringConverter" />
+            <converters:AuditNameToStringConverter x:Key="AuditNameToStringConverter" />
             <converters:CoordinatorAuditorToStringConverter x:Key="CoordinatorAuditorToStringConverter" />
             <converters:AuditAssignmentAuditorsToStringConverter x:Key="AuditAssignmentAuditorsToStringConverter" />
             <converters:AuditAssignmentTemporaryAuditorsToStringConverter x:Key="AuditAssignmentTemporaryAuditorsToStringConverter" />
@@ -26,10 +27,7 @@
         <VerticalStackLayout Padding="10" Spacing="15">
             <ActivityIndicator 
             IsRunning="{Binding IsBusy}"
-            IsVisible="{Binding IsBusy}"
-            Color="DarkGray"
-            HeightRequest="30"
-            HorizontalOptions="Center" />
+            IsVisible="{Binding IsBusy}" />
 
             <HorizontalStackLayout Margin="20" Spacing="10" HorizontalOptions="Fill">
                 <Grid HorizontalOptions="Fill" Margin="20" ColumnSpacing="10">
@@ -46,7 +44,8 @@
                        Placeholder="Main Task"
                        HorizontalOptions="Fill"
                        VerticalOptions="Center"
-                       MinimumWidthRequest="200"/>
+                       MinimumWidthRequest="200"
+                    />
                     <Entry 
                        Text="{Binding TaskTypeEntry}"
                        Grid.Column="1"
@@ -63,156 +62,110 @@
                        MinimumWidthRequest="200"/>
                     <Button 
                         Grid.Column="3"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Center"
                         Text="Get Audit Assignments"
                         Command="{Binding GetAuditAssignmentsCommand}"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                        BackgroundColor="SteelBlue"
-                        TextColor="White"
-                        CornerRadius="8" 
                    />
                     <Button 
                         Grid.Column="4"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Center"
                         Text="Clear"
                         Command="{Binding ClearCommand}"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                        BackgroundColor="DarkKhaki"
-                        TextColor="White"
-                        CornerRadius="8" 
-                   />                    
+                        Style="{StaticResource CancelButtonStyle}"
+                   />
                 </Grid>
             </HorizontalStackLayout>
 
-            <CollectionView ItemsSource="{Binding AuditAssignments}" EmptyView="No data to display">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical"
-                        Span="3"
-                        VerticalItemSpacing="10"
-                        HorizontalItemSpacing="10"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
-                            <Border.BackgroundColor>
-                                <MultiBinding Converter="{StaticResource BoolToColorMultiConverter}">
-                                    <Binding />
-                                    <Binding Path="SelectedAuditAssignment" Source="{RelativeSource AncestorType={x:Type vm:AuditAssignmentSelectionViewModel}}"/>
-                                </MultiBinding>
-                            </Border.BackgroundColor>
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer 
+            <Border>
+                <CollectionView ItemsSource="{Binding AuditAssignments}">
+                    <CollectionView.EmptyView>
+                        <Label Text="No data to display" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                            Span="3"
+                            VerticalItemSpacing="10"
+                            HorizontalItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border>
+                                <Border.BackgroundColor>
+                                    <MultiBinding Converter="{StaticResource BoolToColorMultiConverter}">
+                                        <Binding />
+                                        <Binding Path="SelectedAuditAssignment" Source="{RelativeSource AncestorType={x:Type vm:AuditAssignmentSelectionViewModel}}"/>
+                                    </MultiBinding>
+                                </Border.BackgroundColor>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer 
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AuditAssignmentSelectionViewModel}}, Path=SelectAuditAssignmentCommand}"
                                 CommandParameter="{Binding .}">
-                                </TapGestureRecognizer>
+                                    </TapGestureRecognizer>
 
-                            </Border.GestureRecognizers>
-                            <Border.Content>
-                                <VerticalStackLayout>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Main Task: " FontAttributes="Bold" />
-                                                <Span Text="{Binding MainTask, Converter={StaticResource MainTaskToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Task Type: " FontAttributes="Bold" />
-                                                <Span Text="{Binding TaskType, Converter={StaticResource TaskTypeToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Task: " FontAttributes="Bold" />
-                                                <Span Text="{Binding Task, Converter={StaticResource TaskToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Strategy Plan Period: " FontAttributes="Bold" />
-                                                <Span Text="{Binding StrategyPlanPeriod, Converter={StaticResource StrategyPlanPeriodToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Audit Period: " FontAttributes="Bold" />
-                                                <Span Text="{Binding AuditPeriod, Converter={StaticResource AuditPeriodToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Coordinator: " FontAttributes="Bold" />
-                                                <Span Text="{Binding CoordinatorAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Auditors: " FontAttributes="Bold" />
-                                                <Span Text="{Binding AuditAssignmentAuditors, Converter={StaticResource AuditAssignmentAuditorsToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Temporary Auditors: " FontAttributes="Bold" />
-                                                <Span Text="{Binding AuditAssignmentTemporaryAuditors, Converter={StaticResource AuditAssignmentTemporaryAuditorsToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Operation Audit Types: " FontAttributes="Bold" />
-                                                <Span Text="{Binding AuditAssignmentOperationAuditTypes, Converter={StaticResource AuditAssignmentOperationAuditTypesToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Financial Audit Types: " FontAttributes="Bold" />
-                                                <Span Text="{Binding AuditAssignmentFinancialAuditTypes, Converter={StaticResource AuditAssignmentFinancialAuditTypesToStringConverter}}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                </VerticalStackLayout>
-                            </Border.Content>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                </Border.GestureRecognizers>
+                                <Border.Content>
+                                    <VerticalStackLayout>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Main Task: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding Converter={StaticResource AuditNameToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Coordinator: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding CoordinatorAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Auditors: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding AuditAssignmentAuditors, Converter={StaticResource AuditAssignmentAuditorsToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Temporary Auditors: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding AuditAssignmentTemporaryAuditors, Converter={StaticResource AuditAssignmentTemporaryAuditorsToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Operation Audit Types: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding AuditAssignmentOperationAuditTypes, Converter={StaticResource AuditAssignmentOperationAuditTypesToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Financial Audit Types: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding AuditAssignmentFinancialAuditTypes, Converter={StaticResource AuditAssignmentFinancialAuditTypesToStringConverter}}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </VerticalStackLayout>
+                                </Border.Content>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
 
             <Button 
-                Text="Sync Selected"
-                FontAttributes="None"
-                HorizontalOptions="Fill"
-                VerticalOptions="Center"
+                Text="Save Selected"
                 Command="{Binding SyncSelectedCommand}"
                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                IsVisible="{Binding HasSelected}"
-                BackgroundColor="SteelBlue"
-                TextColor="White"
-                CornerRadius="8"
-                >
-
-            </Button>
+                IsVisible="{Binding HasSelected}"/>
         </VerticalStackLayout>
     </ScrollView>
 

@@ -3,61 +3,69 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:TAAS.NetMAUI.Presentation"               
              x:Class="TAAS.NetMAUI.Presentation.FinancialAuditPage"
-             xmlns:vm="clr-namespace:TAAS.NetMAUI.Presentation.ViewModels"                
-             Title="Financial Audits">
+             xmlns:vm="clr-namespace:TAAS.NetMAUI.Presentation.ViewModels">
+
+    <Shell.TitleView>
+        <Label Text="Financial Audit Types" Style="{StaticResource ShellTitleLabelStyle}" />
+    </Shell.TitleView>
 
 
     <ScrollView>
         <VerticalStackLayout Padding="5" Spacing="5">
             <HorizontalStackLayout Margin="10" Spacing="5">
-                <Label Text="Main Page" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label Text="Main Page" Style="{StaticResource HmbHyperlinkStyle}">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToMainPageCommand}" />
                     </Label.GestureRecognizers>
                 </Label>
                 <Label Text=">" />
-                <Label Text="Financial Audit Types" FontAttributes="Bold" />
+                <Label Text="Financial Audit Types" />
             </HorizontalStackLayout>
 
             <local:SelectedAuditAssignmentView />
-            <Label Padding="5" Text="Financial Audit Types" FontAttributes="Bold" FontSize="Medium" />
-            <CollectionView ItemsSource="{Binding AuditTypeList}" Margin="10" EmptyView="No data to display">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
-                            <Border.Content>
-                                <VerticalStackLayout>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Code: " FontAttributes="Bold" />
-                                                <Span Text="{Binding Code}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Label>
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="Description: " FontAttributes="Bold" />
-                                                <Span Text="{Binding Description}" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <HorizontalStackLayout Margin="10">
-                                        <Button Text="Show Detail"
+            <Label Padding="5" Text="Financial Audit Types"/>
+            <Border>
+                <CollectionView ItemsSource="{Binding AuditTypeList}" Margin="10" EmptyView="No data to display">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                Span="3"
+                                VerticalItemSpacing="10"
+                                HorizontalItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border>
+                                <Border.Content>
+                                    <VerticalStackLayout>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Code: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding Code}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Description: " FontAttributes="Bold" />
+                                                    <Span Text="{Binding Description}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <HorizontalStackLayout Margin="10">
+                                            <Button Text="Show Detail"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FinancialAuditViewModel}}, Path=ShowChecklistsCommand}"
-                                            CommandParameter="{Binding .}"
-                                            BackgroundColor="#1976d2"
-                                            TextColor="White"
-                                            CornerRadius="8" />
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-                            </Border.Content>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
+                                            CommandParameter="{Binding .}" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border.Content>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
 
-            </CollectionView>
+                </CollectionView>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

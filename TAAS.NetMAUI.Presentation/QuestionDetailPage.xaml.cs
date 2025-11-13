@@ -18,7 +18,7 @@ public partial class QuestionDetailPage : ContentPage {
 
     private IEnumerable<ChecklistDetailTaasFileDto> checklistDetailTaasFiles;
 
-    public ObservableCollection<TaasFileItem> FileList { get; set; }
+    public ObservableCollection<TaasFileItem> FileList = new ObservableCollection<TaasFileItem>();
 
 
     public QuestionDetailPage( IServiceManager manager ) {
@@ -124,6 +124,7 @@ public partial class QuestionDetailPage : ContentPage {
             item.IsSelected = !item.IsSelected;
         }
     }
+
 
     private async void OnMainPageTapped( object sender, EventArgs e ) {
         await Shell.Current.GoToAsync( "//MainPage" );

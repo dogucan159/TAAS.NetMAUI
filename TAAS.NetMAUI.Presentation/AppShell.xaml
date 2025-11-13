@@ -4,7 +4,9 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:TAAS.NetMAUI.Presentation"
-    Title="TAAS.NetMAUI.Presentation">
+    Title="TAAS Offline"
+    FlyoutBackgroundColor="{StaticResource White}"
+    >
 
     <ShellContent
             Title="Main Page"
@@ -15,6 +17,7 @@
     <MenuItem
         Text="Sign Out"
         Clicked="OnSignOutClicked"
-        IconImageSource="logout.png" />
+        IconImageSource="logout.png"
+        />
 
 </Shell>

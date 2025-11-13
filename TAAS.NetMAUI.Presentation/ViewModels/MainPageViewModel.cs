@@ -11,6 +11,7 @@ using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Core;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Presentation.Data;
+using TAAS.NetMAUI.Presentation.Models;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
     public partial class MainPageViewModel : ObservableObject {

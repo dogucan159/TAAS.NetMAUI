@@ -4,8 +4,12 @@
              xmlns:local="clr-namespace:TAAS.NetMAUI.Presentation"                  
              x:Class="TAAS.NetMAUI.Presentation.ChecklistDetailPage"
              xmlns:vm="clr-namespace:TAAS.NetMAUI.Presentation.ViewModels"
-             xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters"               
-             Title="Checklist Detail Page">
+             xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters">
+
+    <Shell.TitleView>
+        <Label Text="Checklist Detail" Style="{StaticResource ShellTitleLabelStyle}" />
+    </Shell.TitleView>
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:CoordinatorAuditorToStringConverter x:Key="CoordinatorAuditorToStringConverter" />
@@ -23,24 +27,24 @@
     <ScrollView>
         <VerticalStackLayout Padding="5" Spacing="5">
             <HorizontalStackLayout Margin="10" Spacing="5">
-                <Label Text="Main Page" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label Text="Main Page" Style="{StaticResource HmbHyperlinkStyle}">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToMainPageCommand}" />
                     </Label.GestureRecognizers>
                 </Label>
                 <Label Text=">" />
-                <Label Text="Checklists" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
+                <Label Text="Checklists" Style="{StaticResource HmbHyperlinkStyle}">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToChecklistPageCommand}" />
                     </Label.GestureRecognizers>
                 </Label>
                 <Label Text=">" />
-                <Label Text="Checklist Detail" FontAttributes="Bold" />
+                <Label Text="Checklist Detail" />
             </HorizontalStackLayout>
             <local:SelectedAuditAssignmentView />
             <VerticalStackLayout Padding="5" Spacing="5">
-                <Label Text="Current Checklist" FontAttributes="Bold" FontSize="Medium" />
-                <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
+                <Label Text="Current Checklist" />
+                <Border>
                     <Border.Content>
                         <VerticalStackLayout>
                             <Label IsVisible="{Binding Checklist.Institution, Converter={StaticResource ObjectNullToBoolConverter}}">
@@ -113,16 +117,14 @@
             <!--Headers-->
             <ScrollView>
                 <VerticalStackLayout Padding="5" Spacing="5">
-                    <Label Text="Headers" FontAttributes="Bold" FontSize="Medium" />
-                    <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
+                    <Label Text="Headers"/>
+                    <Border>
                         <Border.Content>
                             <CollectionView ItemsSource="{Binding HeaderList}" SelectionMode="None">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid ColumnDefinitions="1*,4*" Padding="10" ColumnSpacing="15">
                                             <Label Text="{Binding ChecklistTemplateHeader.Name}" 
-                                               VerticalOptions="Center" 
-                                               FontAttributes="Bold" 
                                                HorizontalOptions="Start" />
                                             <Entry Text="{Binding Value, Mode=TwoWay}" 
                                                Grid.Column="1"
@@ -150,8 +152,8 @@
             <!--Details-->
             <ScrollView>
                 <VerticalStackLayout Padding="5" Spacing="5">
-                    <Label Text="Details" FontAttributes="Bold" FontSize="Medium" />
-                    <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
+                    <Label Text="Details" />
+                    <Border>
                         <Border.Content>
                             <CollectionView ItemsSource="{Binding ChecklistGrouped}" SelectionMode="None">
                                 <CollectionView.ItemTemplate>
@@ -160,7 +162,8 @@
                                             <Label Text="{Binding Master.ChecklistTemplateDetail.Comment}"
                                                FontAttributes="Bold"
                                                FontSize="Default"
-                                               BackgroundColor="SteelBlue"
+                                               TextColor="{StaticResource White}"
+                                               BackgroundColor="{StaticResource HmbPrimaryButton}"
                                                Margin="0,10,0,5" />
 
                                             <CollectionView ItemsSource="{Binding Details}" SelectionMode="None">
@@ -169,7 +172,6 @@
                                                         <Grid ColumnDefinitions="4*,2*,5*,1*,3*" Padding="10" ColumnSpacing="15">
                                                             <Label Text="{Binding Comment}" 
                                                                VerticalOptions="Center" 
-                                                               FontAttributes="Bold" 
                                                                HorizontalOptions="Start" />
                                                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Fill">
                                                                 <RadioButton Content="Yes" Value="Y"
@@ -199,11 +201,9 @@
                                                               VerticalOptions="Center"
                                                               HorizontalOptions="Center" />
                                                             <!-- FileNames Link -->
-                                                            <Label Text="{Binding FileNames}" 
+                                                            <Label Text="{Binding FileNames}"                             
                                                                Grid.Column="4"
-                                                               TextColor="SteelBlue"
-                                                               TextDecorations="Underline"
-                                                               VerticalOptions="Center"
+                                                               Style="{StaticResource HmbHyperlinkStyle}"
                                                                HorizontalOptions="Start">
                                                                 <Label.GestureRecognizers>
                                                                     <TapGestureRecognizer 
@@ -232,14 +232,14 @@
 
             <!-- Photo Upload -->
             <VerticalStackLayout Padding="5" Spacing="5">
-                <Label Text="Photos" FontAttributes="Bold" FontSize="Medium" />
-                <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
+                <Label Text="Photos" />
+                <Border>
                     <Border.Content>
                         <VerticalStackLayout x:Name="FilesSection" IsVisible="False">
                             <CollectionView ItemsSource="{Binding FileList}" ItemsLayout="HorizontalList" HeightRequest="200">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Stroke="LightGray" Margin="5" Padding="10">
+                                        <Border>
                                             <Border.Content>
                                                 <Grid>
 
@@ -284,41 +284,38 @@
                 <Button Text="Take Photo and Upload"
                     Command="{Binding TakePhotoCommand}"
                     IsVisible="{Binding IsEditable}"
-                    BackgroundColor="SteelBlue"
-                    TextColor="White"
                     CornerRadius="8" />
             </VerticalStackLayout>
 
             <!--FileUpload-->
             <VerticalStackLayout Padding="5" Spacing="5">
-                <Label Text="Files" FontAttributes="Bold" FontSize="Medium" />
+                <Label Text="Files" />
                 <Border>
                     <Border.Content>
                         <VerticalStackLayout>
                             <CollectionView ItemsSource="{Binding UploadedFileList}">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Padding="10" ColumnDefinitions="3*,2*,2*,Auto" RowDefinitions="Auto">
+                                        <Grid Padding="1" ColumnDefinitions="3*,2*,Auto" RowDefinitions="Auto">
                                             <Label
                                                 Grid.Column="0"
                                                 Text="{Binding FileName}"
-                                                TextColor="SteelBlue"
-                                                TextDecorations="Underline"
-                                                FontAttributes="Bold">
+                                                Style="{StaticResource HmbHyperlinkStyle}"
+                                                HorizontalOptions="Start">
                                                 <Label.GestureRecognizers>
                                                     <TapGestureRecognizer
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=DownloadFileCommand}"
                                                         CommandParameter="{Binding .}" />
                                                 </Label.GestureRecognizers>
                                             </Label>
-                                            <Label Text="{Binding Extension}" Grid.Column="1" />
-                                            <Label Text="{Binding Size}" Grid.Column="2" />
+                                            <!--<Label Text="{Binding Extension}" Grid.Column="1" />-->
+                                            <Label Text="{Binding Size}" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" />
                                             <Button 
-                                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=IsEditable}"
-                                            Text="Delete"
-                                            Grid.Column="3"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=DeleteFileCommand}"
-                                            CommandParameter="{Binding .}" />
+                                                IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=IsEditable}"
+                                                Text="Delete"
+                                                Grid.Column="2"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=DeleteFileCommand}"
+                                                CommandParameter="{Binding .}" />
                                         </Grid>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
@@ -336,12 +333,8 @@
                 <Button Text="Upload Files"
                     Command="{Binding UploadFileCommand}" 
                     IsVisible="{Binding IsEditable}"
-                    BackgroundColor="SteelBlue"
-                    TextColor="White"
                     CornerRadius="8"/>
             </VerticalStackLayout>
-
-
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

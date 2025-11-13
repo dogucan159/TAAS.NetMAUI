@@ -2,94 +2,99 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TAAS.NetMAUI.Presentation.QuestionDetailPage"
-             xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters"             
-             Title="QuestionDetailPage">
+             xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters">
+
+    <Shell.TitleView>
+        <Label Text="Question Detail" Style="{StaticResource ShellTitleLabelStyle}" />
+    </Shell.TitleView>
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
+    <!--<Grid RowDefinitions="*, 2*, *, 5*, Auto" RowSpacing="5">-->
+    <Grid RowDefinitions="*, Auto, 2*, Auto, 5*, Auto" RowSpacing="5">
 
-        <Grid RowDefinitions="*, 2*, 5*, Auto" RowSpacing="5">
-
-            <VerticalStackLayout Padding="5" Spacing="5" Grid.Row="0" >
-                <HorizontalStackLayout Margin="10" Spacing="5">
-                <Label Text="Main Page" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnMainPageTapped" />
-                        </Label.GestureRecognizers>
-                    </Label>
-                    <Label Text=">" />
-                <Label Text="Checklists" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnChecklistPageTapped" />
-                        </Label.GestureRecognizers>
-                    </Label>
-                    <Label Text=">" />
-                <Label Text="Checklist Detail" TextColor="SteelBlue" TextDecorations="Underline" FontAttributes="Bold">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnChecklistDetailPageTapped" />
-                        </Label.GestureRecognizers>
-                    </Label>
-                    <Label Text=">" />
-                    <Label Text="Question Detail" FontAttributes="Bold" />
-                </HorizontalStackLayout>
-            </VerticalStackLayout>
-
-         
-                <CollectionView x:Name="FilesCollectionView"
+        <VerticalStackLayout Padding="5" Spacing="5" Grid.Row="0" >
+            <HorizontalStackLayout Margin="10" Spacing="5">
+                <Label Text="Main Page" Style="{StaticResource HmbHyperlinkStyle}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnMainPageTapped" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label Text=">" />
+                <Label Text="Checklists" Style="{StaticResource HmbHyperlinkStyle}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnChecklistPageTapped" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label Text=">" />
+                <Label Text="Checklist Detail" Style="{StaticResource HmbHyperlinkStyle}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnChecklistDetailPageTapped" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label Text=">" />
+                <Label Text="Question Detail" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+        <Label Text="Uploaded Files" Grid.Row="1" />
+        <Border Grid.Row="2">
+            <CollectionView x:Name="FilesCollectionView"
                     Margin="10"
                     VerticalOptions="Fill"
-                    Grid.Row="1"                                
-                    EmptyView="No file has been uploaded yet">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Stroke="LightGray" Margin="5" Padding="10" StrokeThickness="1">
-                                <Border.BackgroundColor>
-                                    <Binding Path="IsSelected" Converter="{StaticResource BoolToColorConverter}" />
-                                </Border.BackgroundColor>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnBorderTapped">
-                                    </TapGestureRecognizer>
-                                </Border.GestureRecognizers>
-                                <Border.Content>
-                                    <VerticalStackLayout>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="File Name: " FontAttributes="Bold" />
-                                                    <Span Text="{Binding Name}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Size: " FontAttributes="Bold" />
-                                                    <Span Text="{Binding  Size}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                    </VerticalStackLayout>
-                                </Border.Content>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-  
+                    >
+                <CollectionView.EmptyView>
+                    <Label Text="No data to display" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <Border.BackgroundColor>
+                                <Binding Path="IsSelected" Converter="{StaticResource BoolToColorConverter}" />
+                            </Border.BackgroundColor>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnBorderTapped">
+                                </TapGestureRecognizer>
+                            </Border.GestureRecognizers>
+                            <Border.Content>
+                                <VerticalStackLayout>
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="File Name: " FontAttributes="Bold" />
+                                                <Span Text="{Binding Name}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Size: " FontAttributes="Bold" />
+                                                <Span Text="{Binding  Size}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </Border.Content>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+        <Label Text="Explanation Formatted" Grid.Row="3" />
+        <WebView x:Name="EditorWebView"
+            Source="editor.html"
+            VerticalOptions="Fill"
+            Grid.Row="4" />
 
-
-            <WebView x:Name="EditorWebView"
-                     Source="editor.html"
-                     Grid.Row="2" />
-
-            <Button Text="Save"
-                    Grid.Row="3"
-                    BackgroundColor="LightBlue"
+        <Button Text="Save"
+                    Grid.Row="5"
                     Clicked="OnSaveClicked" />
-        </Grid>
+    </Grid>
 
-  
+
 
 </ContentPage>

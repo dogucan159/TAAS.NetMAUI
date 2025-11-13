@@ -39,5 +39,10 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
 
             }
         }
+
+        [RelayCommand]
+        private async System.Threading.Tasks.Task SetPassword() {
+
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace TAAS.NetMAUI.Presentation.Converters {
     public class BoolToColorConverter : IValueConverter {
         public object? Convert( object? value, Type targetType, object? parameter, CultureInfo culture ) {
-            return value != null && ( bool )value ? Microsoft.Maui.Graphics.Color.FromArgb( "#999900" ) : Microsoft.Maui.Graphics.Color.FromArgb( "#000000" );
+            return value != null && ( bool )value ? Microsoft.Maui.Graphics.Color.FromArgb( "#919191" ) : Microsoft.Maui.Graphics.Color.FromArgb( "#FFFFFF" );
         }
 
         public object? ConvertBack( object? value, Type targetType, object? parameter, CultureInfo culture ) {

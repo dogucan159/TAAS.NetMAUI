@@ -6,13 +6,19 @@
              FlyoutItem.IsVisible="False"
              >
     <VerticalStackLayout  Padding="30" Spacing="15">
-        <Label Text="Login" FontSize="24" HorizontalOptions="Center" />
+        <Label Text="TAAS Login" FontSize="24" HorizontalOptions="Center" />
 
         <Entry Placeholder="Identification Number" Text="{Binding IdentificationNumber}" />
         <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="True" />
 
         <Button Text="Login" Command="{Binding LoginCommand}" />
-        <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+        <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" />
+
+        <Label Text="Set New Password" Style="{StaticResource HmbHyperlinkStyle}">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding SetPasswordCommand}" />
+            </Label.GestureRecognizers>
+        </Label>
 
     </VerticalStackLayout>
 </ContentPage>

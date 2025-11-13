@@ -11,7 +11,7 @@ namespace TAAS.NetMAUI.Presentation.Converters
         public object Convert( object[] values, Type targetType, object parameter, CultureInfo culture ) {
             var current = values[0];
             var selected = values[1];
-            return Equals( current, selected ) ? Microsoft.Maui.Graphics.Color.FromArgb( "#999900" ) : Microsoft.Maui.Graphics.Color.FromArgb( "#000000" );
+            return Equals( current, selected ) ? Microsoft.Maui.Graphics.Color.FromArgb( "#919191" ) : Microsoft.Maui.Graphics.Color.FromArgb( "#FFFFFF" );
         }
 
         public object[] ConvertBack( object value, Type[] targetTypes, object parameter, CultureInfo culture ) {

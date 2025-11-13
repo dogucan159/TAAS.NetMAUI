@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Presentation.Data;
+using TAAS.NetMAUI.Presentation.Models;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
     public partial class SelectedAuditAssignmentViewViewModel : ObservableObject {
@@ -17,6 +18,8 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         public SelectedAuditAssignmentViewViewModel() {
             CurrentAuditAssignment = NavigationContext.CurrentAuditAssignment;
         }
+
+
     }
 
 }
