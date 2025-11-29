@@ -6,8 +6,21 @@
              xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters">
 
     <Shell.TitleView>
-        <Label Text="Audit Assignments" Style="{StaticResource ShellTitleLabelStyle}" />
+        <!--<Label Text="Audit Assignments" Style="{StaticResource ShellTitleLabelStyle}" />-->
+        <HorizontalStackLayout Spacing="20" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <!-- Logo -->
+                <Image Source="logo_spaced.png"
+                   Aspect="AspectFit"
+                   BackgroundColor="{StaticResource White}"/>
+
+                <!-- Title -->
+            <Label Text="Audit Assignments"
+                   Style="{StaticResource ShellTitleLabelStyle}"
+                   VerticalOptions="Center" />
+        </HorizontalStackLayout>
     </Shell.TitleView>
+    
+    
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -21,6 +34,7 @@
     </ContentPage.Resources>
 
     <ScrollView>
+
         <VerticalStackLayout Padding="10" Spacing="15">
             <!--<Label 
                 Text="{Binding WelcomeMessage}" 
