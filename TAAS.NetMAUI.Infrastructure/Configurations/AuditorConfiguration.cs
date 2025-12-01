@@ -27,10 +27,6 @@ namespace TAAS.NetMAUI.Infrastructure {
                 .HasColumnType( "varchar" )
                 .HasMaxLength( 255 )
                 .IsRequired( true );
-
-            builder.Property( x => x.Password )
-                .HasColumnType( "text" )
-                .IsRequired( true );
         }
     }
 }

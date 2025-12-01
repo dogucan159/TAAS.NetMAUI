@@ -7,7 +7,7 @@
 
 
     <Shell.TitleView>
-        <Label Text="Operation Audit Types" Style="{StaticResource ShellTitleLabelStyle}" />
+        <local:ShellTitleView ViewTitle="Operation Audit Types" />
     </Shell.TitleView>
 
     <ScrollView>

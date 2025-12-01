@@ -20,8 +20,7 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                     FirstName = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
                     LastName = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
                     IdentificationNumber = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    AccessToken = table.Column<string>(type: "TEXT", nullable: true)
+                    MachineName = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

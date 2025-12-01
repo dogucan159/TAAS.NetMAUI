@@ -14,10 +14,10 @@
             Route="MainPage" 
             />
 
-    <MenuItem
+    <!--<MenuItem
         Text="Sign Out"
         Clicked="OnSignOutClicked"
         IconImageSource="logout.png"
-        />
+        />-->
 
 </Shell>

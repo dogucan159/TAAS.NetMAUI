@@ -14,7 +14,7 @@ namespace TAAS.NetMAUI.Presentation {
             base.OnAppearing();
 
             if ( BindingContext is MainPageViewModel vm ) 
-                await vm.LoadAuditAssignmentsAsync();
+                await vm.InitMainPageAsync();
         }
     }
 }

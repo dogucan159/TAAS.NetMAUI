@@ -125,10 +125,11 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         }
 
         public void EvaluatePermissions() {
-            var sessionUserId = Preferences.Get( "SessionUserId", -1L );
 
-            IsEditable = sessionUserId > 0 &&
-                         Checklist?.ChecklistAuditors?.Any( a => a.AuditorId == sessionUserId ) == true;
+            var auditorDto = _manager.AuditorService.GetByMachineName( false ).Result;
+
+            IsEditable = auditorDto != null &&
+                         Checklist?.ChecklistAuditors?.Any( a => a.AuditorId == auditorDto.Id ) == true;
         }
 
 
@@ -140,8 +141,9 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 await stream.CopyToAsync( ms );
                 var bytes = ms.ToArray();
 
-                var sessionUserId = Preferences.Get( "SessionUserId", -1L );
-                var sessionUser = await _manager.AuditorService.GetById( sessionUserId, false );
+                var auditorDto = _manager.AuditorService.GetByMachineName( false ).Result;
+
+                var sessionUser = await _manager.AuditorService.GetById( auditorDto.Id, false );
 
                 var taasFile = new TaasFileCreateDto {
                     Name = result.FileName,

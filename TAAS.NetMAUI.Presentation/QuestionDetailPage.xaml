@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TAAS.NetMAUI.Presentation"                
              x:Class="TAAS.NetMAUI.Presentation.QuestionDetailPage"
              xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters">
 
     <Shell.TitleView>
-        <Label Text="Question Detail" Style="{StaticResource ShellTitleLabelStyle}" />
+        <local:ShellTitleView ViewTitle="Question Detail" />        
     </Shell.TitleView>
 
     <ContentPage.Resources>

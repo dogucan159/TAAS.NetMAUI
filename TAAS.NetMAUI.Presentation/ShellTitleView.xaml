@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TAAS.NetMAUI.Presentation.ShellTitleView"
+             x:Name="thisView">
+    <Grid ColumnDefinitions="Auto, Auto, *" 
+          ColumnSpacing="20" 
+          HorizontalOptions="Fill">
+
+        <Image Grid.Column="0"
+               Source="logo_spaced.png"
+               Aspect="AspectFit"
+               BackgroundColor="{StaticResource White}"/>
+
+        <Label Grid.Column="1"
+               Text="{Binding ViewTitle, Source={x:Reference thisView}}"
+               Style="{StaticResource ShellTitleLabelStyle}"
+               VerticalOptions="Center" />
+
+        <Label Grid.Column="2"
+               Text="{Binding MachineUserName, Source={x:Reference thisView}}"
+               Style="{StaticResource ShellTitleLabelStyle}"
+               VerticalOptions="Center" 
+               HorizontalOptions="End" />
+    </Grid>
+</ContentView>

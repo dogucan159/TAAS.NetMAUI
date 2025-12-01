@@ -6,14 +6,12 @@ using System.Windows.Input;
 using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Presentation.Data;
 using TAAS.NetMAUI.Presentation.Models;
-using TAAS.NetMAUI.Presentation.Utilities;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
 
     public partial class ChecklistSelectionViewModel : ObservableObject {
 
         private readonly IServiceManager _manager;
-        private readonly ITokenUtility _tokenUtility;
 
         [ObservableProperty]
         private ObservableCollection<ChecklistItem> checklists = new ObservableCollection<ChecklistItem>();
@@ -22,9 +20,8 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         private bool isBusy = false;
         public bool HasSelected => Checklists != null && Checklists.Any( c => c.IsSelected );
 
-        public ChecklistSelectionViewModel( IServiceManager manager, ITokenUtility tokenUtility ) {
+        public ChecklistSelectionViewModel( IServiceManager manager ) {
             _manager = manager;
-            _tokenUtility = tokenUtility;
         }
 
         public ICommand ToggleChecklistSelectionCommand => new Command<ChecklistItem>( item => {
@@ -41,9 +38,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             try {
                 IsBusy = true;
 
-                string token = await _tokenUtility.GetToken();
-
-                var apiChecklists = await _manager.ApiService.PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( NavigationContext.CurrentAuditAssignment.Id, NavigationContext.CurrentAuditType.Id, token );
+                var apiChecklists = await _manager.ApiService.PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( NavigationContext.CurrentAuditAssignment.Id, NavigationContext.CurrentAuditType.Id );
 
                 if ( apiChecklists != null && apiChecklists.Count > 0 ) {
                     var dbChecklists = await _manager.ChecklistService.GetChecklistsByAuditAssignmentIdAndAuditTypeId( NavigationContext.CurrentAuditAssignment.Id, NavigationContext.CurrentAuditType.Id, false );
@@ -72,14 +67,12 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
 
                 //Sync
 
-                string token = await _tokenUtility.GetToken();
-
                 var selectedChecklists = Checklists.Where( x => x.IsSelected ).ToList();
 
                 foreach ( var selectedChecklist in selectedChecklists ) {
-                    var checklistDto = await _manager.ApiService.PullChecklistFromAPI( selectedChecklist.Id, token );
+                    var checklistDto = await _manager.ApiService.PullChecklistFromAPI( selectedChecklist.Id );
 
-                    await _manager.ApiService.SyncChecklistAsync( checklistDto, token );
+                    await _manager.ApiService.SyncChecklistAsync( checklistDto );
                 }
 
                 await Shell.Current.GoToAsync( nameof( ChecklistPage ) );

@@ -7,7 +7,7 @@
              xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters">
 
     <Shell.TitleView>
-        <Label Text="Checklist Detail" Style="{StaticResource ShellTitleLabelStyle}" />
+        <local:ShellTitleView ViewTitle="Checklist Detail" />
     </Shell.TitleView>
 
     <ContentPage.Resources>

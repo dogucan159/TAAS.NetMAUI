@@ -15,18 +15,6 @@ namespace TAAS.NetMAUI.Infrastructure.Data {
         public static void Initialize( IServiceProvider serviceProvider ) {
             var context = serviceProvider.GetRequiredService<TaasDbContext>();
             context.Database.Migrate();
-
-            if ( !context.Auditors.Any() ) {
-                var hashedPassword = PasswordHelper.Hash( "FC_2025.Taas" );
-                context.Auditors.Add( new Auditor {
-                    Id = 1,
-                    FirstName = "Dogucan",
-                    LastName = "Kip",
-                    IdentificationNumber = "56812118136",
-                    Password = hashedPassword
-                } );
-                context.SaveChanges();
-            }
         }
     }
 }

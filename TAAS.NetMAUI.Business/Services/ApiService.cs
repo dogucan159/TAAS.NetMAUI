@@ -20,8 +20,11 @@ using TAAS.NetMAUI.Shared;
 
 namespace TAAS.NetMAUI.Business.Services {
 
-    public class RootObject {
+    public class AuditAssignmentRootObject {
         public List<AuditAssignmentDto> Content { get; set; }
+    }
+    public class AuditorRootObject {
+        public List<AuditorDto> Content { get; set; }
     }
     public class ApiService : IApiService {
 
@@ -33,23 +36,72 @@ namespace TAAS.NetMAUI.Business.Services {
             _manager = manager;
             _mapper = mapper;
             _endpointSettings = ApiConfigProvider.GetEndpointSettings();
-
         }
 
-        public async Task<List<AuditAssignmentDto>?> PullAuditAssignments( string mainTask, string taskType, string task, string token, AuditorDto currentAuditor ) {
+        public async Task<string> GetToken() {
+
+            string clientVal = "";
+            string secretVal = "";
+            string endpointVal = "";
+#if DEBUG_TEST || RELEASE_TEST
+                clientVal = "taas-client";
+                secretVal = "?d52X6/uUuZ?P%2bwG";
+                endpointVal = "https://test-giris.hmb.gov.tr/oauth2.0/accessToken";
+
+#elif RELEASE_PROD
+                clientVal = "";
+                secretVal = "";
+                endpointVal = "";
+#else
+            return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NjgxMjExODEzNiIsInRja24iOiI1NjgxMjExODEzNiIsInVzZXJfbmFtZSI6IjU2ODEyMTE4MTM2Iiwicm9sZXMiOlt7InJvbGVJZCI6IjEiLCJyb2xlTmFtZSI6IlRBQVNfQURNSU4iLCJrYW11SWRhcmVzaUFkaSI6IkhBWsSwTkUgVkUgTUFMxLBZRSBCQUtBTkxJxJ5JIiwibXVoYXNlYmVCaXJpbWlBZGkiOiJIQVrEsE5FIFZFIE1BTMSwWUUgQkFLQU5MScSeSSBNRVJLRVogU0FZTUFOTElLIE3DnETDnFJMw5zEnsOcIiwibXVoYXNlYmVCaXJpbVZrbiI6IjYxMTAzMzM1MzQiLCJoYXJjYW1hQmlyaW1pIjoiSEFaxLBORSBWRSBNQUzEsFlFIEJBS0FOTEnEnkkgQsSwTEfEsCBURUtOT0xPSsSwTEVSxLAgR0VORUwgTcOcRMOcUkzDnMSew5wiLCJoYXJjYW1hQmlyaW1pVktOIjoiNjExMDM2ODUzMyIsImF1dGhvcml0aWVzIjpbIlRBQVNfQVVESVRPUl9USVRMRV9RVUVSWSIsIlRBQVNfQVVESVRPUl9USVRMRV9BRERfVVBEQVRFIiwiVEFBU19BVURJVF9UWVBFX1FVRVJZIiwiVEFBU19BVURJVF9UWVBFX0FERF9VUERBVEUiLCJUQUFTX0lOVEVSTkFMX0NPTlRST0xfUVVBTElUWV9RVUVSWSIsIlRBQVNfSU5URVJOQUxfQ09OVFJPTF9RVUFMSVRZX0FERF9VUERBVEUiLCJUQUFTX1BSSU9SSVRZX0xFVkVMX1FVRVJZIiwiVEFBU19QUklPUklUWV9MRVZFTF9BRERfVVBEQVRFIiwiVEFBU19GSU5ESU5HX1RZUEVfUVVFUlkiLCJUQUFTX0ZJTkRJTkdfVFlQRV9BRERfVVBEQVRFIiwiVEFBU19DVVJSRU5DWV9RVUVSWSIsIlRBQVNfQ1VSUkVOQ1lfQUREX1VQREFURSIsIlRBQVNfQVVESVRPUl9RVUVSWSIsIlRBQVNfQVVESVRPUl9BRERfVVBEQVRFIiwiVEFBU19JTlNUSVRVVElPTl9RVUVSWSIsIlRBQVNfSU5TVElUVVRJT05fQUREX1VQREFURSIsIlRBQVNfVEFTS19RVUVSWSIsIlRBQVNfVEFTS19BRERfVVBEQVRFIiwiVEFBU19NQUlOX1RBU0tfUVVFUlkiLCJUQUFTX01BSU5fVEFTS19BRERfVVBEQVRFIiwiVEFBU19UQVNLX1RZUEVfUVVFUlkiLCJUQUFTX1RBU0tfVFlQRV9BRERfVVBEQVRFIiwiVEFBU19LRVlfUkVRVUlSRU1FTlRfUVVFUlkiLCJUQUFTX0tFWV9SRVFVSVJFTUVOVF9BRERfVVBEQVRFIiwiVEFBU19HRU5FUkFMX0ZVTkNUSU9OX1FVRVJZIiwiVEFBU19HRU5FUkFMX0ZVTkNUSU9OX0FERF9VUERBVEUiLCJUQUFTX1NQRUNJRklDX0ZVTkNUSU9OX1FVRVJZIiwiVEFBU19TUEVDSUZJQ19GVU5DVElPTl9BRERfVVBEQVRFIiwiVEFBU19DSEVDS0xJU1RfVEVNUExBVEVfUVVFUlkiLCJUQUFTX0NIRUNLTElTVF9URU1QTEFURV9BRERfVVBEQVRFIiwiVEFBU19SSVNLX01FVEhPRE9MT0dZX1FVRVJZIiwiVEFBU19SSVNLX01FVEhPRE9MT0dZX0FERF9VUERBVEUiLCJUQUFTX0FVRElUX1BFUklPRF9RVUVSWSIsIlRBQVNfQVVESVRfUEVSSU9EX0FERF9VUERBVEUiLCJUQUFTX0NIRUNLTElTVF9RVUVSWSIsIlRBQVNfQ0hFQ0tMSVNUX0FERF9VUERBVEUiLCJUQUFTX0FVRElUX0FTU0lHTk1FTlRfUVVFUlkiLCJUQUFTX0FVRElUX0FTU0lHTk1FTlRfQUREX1VQREFURSIsIlRBQVNfQVVESVRfRklORElOR19RVUVSWSIsIlRBQVNfQVVESVRfRklORElOR19BRERfVVBEQVRFIiwiVEFBU19SSVNLX0FTU0VTU01FTlRfUVVFUlkiLCJUQUFTX1JJU0tfQVNTRVNTTUVOVF9BRERfVVBEQVRFIiwiVEFBU19TVFJBVEVHWV9QTEFOX1BFUklPRF9RVUVSWSIsIlRBQVNfU1RSQVRFR1lfUExBTl9QRVJJT0RfQUREX1VQREFURSIsIlRBQVNfQVVESVRfUFJPR1JBTV9RVUVSWSIsIlRBQVNfQVVESVRfUFJPR1JBTV9BRERfVVBEQVRFIiwiVEFBU19DRVJUSUZJQ0FUSU9OX1RZUEVfUVVFUlkiLCJUQUFTX0NFUlRJRklDQVRJT05fVFlQRV9BRERfVVBEQVRFIiwiVEFBU19TQU1QTElOR19RVUVSWSIsIlRBQVNfU0FNUExJTkdfQUREX1VQREFURSIsIlRBQVNfQ09MRF9SRVZJRVdfUkVTVUxUX1FVRVJZIiwiVEFBU19DT0xEX1JFVklFV19SRVNVTFRfQUREX1VQREFURSIsIlRBQVNfSE9UX1JFVklFV19SRVNVTFRfUVVFUlkiLCJUQUFTX0hPVF9SRVZJRVdfUkVTVUxUX0FERF9VUERBVEUiLCJUQUFTX0NPTERfUkVWSUVXX0FTU0lHTk1FTlRfUVVFUlkiLCJUQUFTX0NPTERfUkVWSUVXX0FTU0lHTk1FTlRfQUREX1VQREFURSIsIlRBQVNfQUJJTElUWV9BTkRfSU5URVJFU1RfUVVFUlkiLCJUQUFTX0FCSUxJVFlfQU5EX0lOVEVSRVNUX0FERF9VUERBVEUiLCJUQUFTX0VNQUlMX1RFTVBMQVRFX1FVRVJZIiwiVEFBU19FTUFJTF9URU1QTEFURV9BRERfVVBEQVRFIiwiVEFBU19SRU1JTkRFUl9RVUVSWSIsIlRBQVNfUkVNSU5ERVJfQUREX1VQREFURSIsIlRBQVNfQVVESVRfTk9URV9RVUVSWSIsIlRBQVNfQVVESVRfTk9URV9BRERfVVBEQVRFIiwiVEFBU19CRUxHRU5FVF9RVUVSWSIsIlRBQVNfQkVMR0VORVRfQUREX1VQREFURSIsIlRBQVNfVEFTS19NT05JVE9SSU5HX1FVRVJZIiwiVEFBU19UQVNLX01PTklUT1JJTkdfQUREX1VQREFURSIsIlRBQVNfRUlNWkFfUVVFUlkiLCJUQUFTX0VJTVpBX0FERF9VUERBVEUiLCJUQUFTX1RBQVNfRklMRV9RVUVSWSIsIlRBQVNfVEFBU19GSUxFX0FERF9VUERBVEUiLCJUQUFTX1RBQVNfRk9MREVSX1FVRVJZIiwiVEFBU19UQUFTX0ZPTERFUl9BRERfVVBEQVRFIiwiVEFBU19XT1JLRkxPV19RVUVSWSIsIlRBQVNfV09SS0ZMT1dfQUREX1VQREFURSIsIlRBQVNfU0VDVE9SX1FVRVJZIiwiVEFBU19TRUNUT1JfQUREX1VQREFURSIsIlRBQVNfVEFBU19SRVBPUlRfUVVFUlkiLCJUQUFTX1RBQVNfUkVQT1JUX0FERF9VUERBVEUiXX1dLCJyb2xlTGlzdCI6W10sInRpdGxlIjoiWWF6xLFsxLFtIFV6bWFuxLEiLCJjbGllbnRfaWQiOiJzd2FnZ2VyLXVzZXIiLCJwaG9uZSI6IjA1Mzc5NDUxMDk5Iiwic3VybmFtZSI6IktpcCIsInNjb3BlIjpbInN3YWdnZXIiXSwibmFtZSI6IkRvxJ91Y2FuIiwianRpIjoiRlc4bGVfYm9oV2wtYzVneFRSa0s5aUpseWdFIiwiZW1haWwiOiJkb2d1Y2FuLmtpcGZ1dHVyZWNvbS5jb20udHIifQ.ebx_CVOgBu-MqHVgiiJriZWoo2X4YIZXK8hKPIbGy1Y";
+
+#endif
+            try {
+                var client = new HttpClient();
+
+
+                var requestBody = new FormUrlEncodedContent( new[]
+                {
+                    new KeyValuePair<string, string>("client_id", clientVal),
+                    new KeyValuePair<string, string>("client_secret",secretVal),
+                    new KeyValuePair<string, string>("grant_type", "client_credentials"),
+                    new KeyValuePair<string, string>("scope", "0FFLINETAAS")
+                } );
+
+                var request = new HttpRequestMessage( HttpMethod.Post, endpointVal ) {
+                    Content = requestBody
+                };
+
+                request.Content.Headers.ContentType = new MediaTypeHeaderValue( "application/x-www-form-urlencoded" );
+
+                var response = await client.SendAsync( request );
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                var tokenResult = JsonConvert.DeserializeObject<TokenResult>( responseContent )?.access_token;
+
+                return tokenResult ?? string.Empty;
+            }
+            catch ( Exception ex ) {
+
+                throw new Exception( ex.Message );
+            }
+        }
+
+        public async Task<List<AuditAssignmentDto>?> PullAuditAssignments( string mainTask, string taskType, string task ) {
             try {
 
                 //https://dev-taas.hmb.gov.tr/backend/
                 HttpClient client = new() {
                     BaseAddress = new Uri( _endpointSettings.RootAddress )
                 };
+                string token = await GetToken();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
 
                 var payload = new {
                     ilike = new { mainTaskCode = mainTask, taskTypeCode = taskType, taskCode = task },
                     page = 0,
                     size = 20,
-                    userIdentity = currentAuditor.IdentificationNumber
+                    userIdentity = System.Environment.MachineName
                 };
 
                 var json = System.Text.Json.JsonSerializer.Serialize( payload );
@@ -59,7 +111,7 @@ namespace TAAS.NetMAUI.Business.Services {
                     var response = await client.PostAsync( $"{_endpointSettings.ControllerName}audit-assignment/queryInfo", content );
                     response.EnsureSuccessStatusCode();
                     var auditAssignmentsJsonString = await response.Content.ReadAsStringAsync();
-                    result = JsonConvert.DeserializeObject<RootObject>( auditAssignmentsJsonString )?.Content;
+                    result = JsonConvert.DeserializeObject<AuditAssignmentRootObject>( auditAssignmentsJsonString )?.Content;
                 }
                 catch ( HttpRequestException ex ) {
                     throw new Exception( ex.Message );
@@ -73,11 +125,12 @@ namespace TAAS.NetMAUI.Business.Services {
 
         }
 
-        public async Task<List<ChecklistDto>?> PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( long auditAssignmentId, long auditTypeId, string token ) {
+        public async Task<List<ChecklistDto>?> PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( long auditAssignmentId, long auditTypeId ) {
 
             HttpClient client = new() {
                 BaseAddress = new Uri( _endpointSettings.RootAddress )
             };
+            string token = await GetToken();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
 
 
@@ -103,13 +156,14 @@ namespace TAAS.NetMAUI.Business.Services {
             return result;
         }
 
-        public async Task<ChecklistDto?> PullChecklistFromAPI( long id, string token ) {
+        public async Task<ChecklistDto?> PullChecklistFromAPI( long id ) {
 
             try {
                 //https://dev-taas.hmb.gov.tr/backend/
                 HttpClient client = new() {
                     BaseAddress = new Uri( _endpointSettings.RootAddress )
                 };
+                string token = await GetToken();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
                 ChecklistDto? result = null;
                 try {
@@ -127,8 +181,46 @@ namespace TAAS.NetMAUI.Business.Services {
             catch ( Exception ex ) {
                 throw new Exception( ex.Message );
             }
+        }
 
+        public async Task<AuditorDto?> PullAndSyncAuditorFromAPI() {
 
+            try {
+                //https://dev-taas.hmb.gov.tr/backend/
+                HttpClient client = new() {
+                    BaseAddress = new Uri( _endpointSettings.RootAddress )
+                };
+                string token = await GetToken();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
+                var payload = new {
+                    eq = new { machineName = System.Environment.MachineName },
+                    page = 0,
+                    size = 20,
+                };
+
+                var json = System.Text.Json.JsonSerializer.Serialize( payload );
+                var content = new StringContent( json, Encoding.UTF8, "application/json" );
+
+                var response = await client.PostAsync( $"{_endpointSettings.ControllerName}auditor/query", content );
+                response.EnsureSuccessStatusCode();
+                var auditorsJsonString = await response.Content.ReadAsStringAsync();
+                List<AuditorDto>? result = JsonConvert.DeserializeObject<AuditorRootObject>( auditorsJsonString )?.Content;
+
+                AuditorDto? auditorDto = result?.FirstOrDefault();
+
+                if ( auditorDto != null ) {
+                    var dbAuditor = await _manager.Auditor.GetOneAuditorById( auditorDto.Id, true );
+                    if ( dbAuditor == null ) {
+                        var auditor = _mapper.Map<Auditor>( auditorDto );
+                        _manager.Auditor.CreateOneAuditor( auditor );
+                        await _manager.SaveAsync();
+                    }
+                }
+                return auditorDto;
+            }
+            catch ( Exception ex ) {
+                throw new Exception( ex.Message );
+            }
         }
 
         public async System.Threading.Tasks.Task SyncAuditAssignmentAsync( AuditAssignmentDto auditAssignmentDto ) {
@@ -146,7 +238,6 @@ namespace TAAS.NetMAUI.Business.Services {
                 auditAssignment.CoordinatorAuditor = dbCoordinatorAuditor;
             else {
                 var auditor = _mapper.Map<Auditor>( auditAssignmentDto.CoordinatorAuditor );
-                auditor.Password = PasswordHelper.Hash( "FC_2025.Taas" );
                 auditAssignment.CoordinatorAuditor = auditor;
             }
 
@@ -219,7 +310,6 @@ namespace TAAS.NetMAUI.Business.Services {
                             newAuditAssignmentAuditor.Auditor = dbAuditor;
                         else {
                             var auditor = _mapper.Map<Auditor>( auditAssignmentAuditor.Auditor );
-                            auditor.Password = PasswordHelper.Hash( "FC_2025.Taas" );
                             newAuditAssignmentAuditor.Auditor = auditor;
                         }
                         auditAssignment.AuditAssignmentAuditors.Add( newAuditAssignmentAuditor );
@@ -239,7 +329,6 @@ namespace TAAS.NetMAUI.Business.Services {
                             newAuditAssignmentTemporaryAuditor.Auditor = dbAuditor;
                         else {
                             var auditor = _mapper.Map<Auditor>( auditAssignmentTemporaryAuditor.Auditor );
-                            auditor.Password = PasswordHelper.Hash( "FC_2025.Taas" );
                             newAuditAssignmentTemporaryAuditor.Auditor = auditor;
                         }
                         auditAssignment.AuditAssignmentTemporaryAuditors.Add( newAuditAssignmentTemporaryAuditor );
@@ -291,11 +380,12 @@ namespace TAAS.NetMAUI.Business.Services {
             await _manager.SaveAsync();
         }
 
-        public async System.Threading.Tasks.Task SyncChecklistAsync( ChecklistDto checklistDto, string token ) {
+        public async System.Threading.Tasks.Task SyncChecklistAsync( ChecklistDto checklistDto ) {
             try {
                 HttpClient client = new() {
                     BaseAddress = new Uri( _endpointSettings.RootAddress )
                 };
+                string token = await GetToken();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
 
                 Checklist checklist = new Checklist() {
@@ -346,7 +436,6 @@ namespace TAAS.NetMAUI.Business.Services {
                         checklist.ReviewedAuditor = dbReviewedAuditor;
                     else {
                         var auditor = _mapper.Map<Auditor>( checklistDto.ReviewedAuditor );
-                        auditor.Password = PasswordHelper.Hash( "FC_2025.Taas" );
                         checklist.ReviewedAuditor = auditor;
                     }
                 } //end reviewed auditor
@@ -396,7 +485,6 @@ namespace TAAS.NetMAUI.Business.Services {
                                 newChecklistAuditor.Auditor = dbAuditor;
                             else {
                                 var auditor = _mapper.Map<Auditor>( checklistAuditor.Auditor );
-                                auditor.Password = PasswordHelper.Hash( "FC_2025.Taas" );
                                 newChecklistAuditor.Auditor = auditor;
                             }
                             checklist.ChecklistAuditors.Add( newChecklistAuditor );
@@ -448,12 +536,13 @@ namespace TAAS.NetMAUI.Business.Services {
             }
         }
 
-        public async System.Threading.Tasks.Task TransferChecklistsToLive( List<ChecklistDto> lstChecklistDto, String token ) {
+        public async System.Threading.Tasks.Task TransferChecklistsToLive( List<ChecklistDto> lstChecklistDto ) {
             try {
                 //https://dev-taas.hmb.gov.tr/backend/
                 HttpClient client = new() {
                     BaseAddress = new Uri( _endpointSettings.RootAddress )
                 };
+                string token = await GetToken();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
 
                 foreach ( var checklistDto in lstChecklistDto ) {

@@ -11,7 +11,7 @@ using TAAS.NetMAUI.Infrastructure.Data;
 namespace TAAS.NetMAUI.Infrastructure.Migrations
 {
     [DbContext(typeof(TaasDbContext))]
-    [Migration("20251030060322_InitialCreate")]
+    [Migration("20251129182801_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -222,9 +222,6 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AccessToken")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -240,9 +237,8 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<string>("MachineName")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

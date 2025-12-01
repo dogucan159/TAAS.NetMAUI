@@ -6,7 +6,7 @@
              xmlns:vm="clr-namespace:TAAS.NetMAUI.Presentation.ViewModels">
 
     <Shell.TitleView>
-        <Label Text="Financial Audit Types" Style="{StaticResource ShellTitleLabelStyle}" />
+        <local:ShellTitleView ViewTitle="Financial Audit Types" />
     </Shell.TitleView>
 
 

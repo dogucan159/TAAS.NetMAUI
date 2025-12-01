@@ -7,12 +7,10 @@ using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Presentation.Data;
 using TAAS.NetMAUI.Presentation.Models;
-using TAAS.NetMAUI.Presentation.Utilities;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
     public partial class ChecklistViewModel : ObservableObject {
         private readonly IServiceManager _manager;
-        private readonly ITokenUtility _tokenUtility;
 
         [ObservableProperty]
         private ObservableCollection<ChecklistItem> checklists = new ObservableCollection<ChecklistItem>();
@@ -29,9 +27,8 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         [ObservableProperty]
         private bool isNotSystemAudit = false;
 
-        public ChecklistViewModel( IServiceManager manager, ITokenUtility tokenUtility ) {
+        public ChecklistViewModel( IServiceManager manager ) {
             _manager = manager;
-            _tokenUtility = tokenUtility;
 
             IsNotSystemAudit = NavigationContext.CurrentAuditAssignment?.TaskType.SystemAuditTypeId != NavigationContext.CurrentAuditType?.Id;
 
@@ -74,9 +71,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
 
                     if ( checklists.Any() ) {
 
-                        string token = await _tokenUtility.GetToken();
-
-                        await _manager.ApiService.TransferChecklistsToLive( checklists, token );
+                        await _manager.ApiService.TransferChecklistsToLive( checklists );
                         await Shell.Current.DisplayAlert( "Success", "Unsynced files transferred to live!", "OK" );
 
                         await LoadChecklistsAsync();

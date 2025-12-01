@@ -30,5 +30,10 @@ namespace TAAS.NetMAUI.Business.Services {
             var auditor = await _manager.Auditor.GetOneAuditorByIdentificationNumber( identificationNumber, trackChanges );
             return _mapper.Map<AuditorDto>( auditor );
         }
+
+        public async Task<AuditorDto> GetByMachineName( bool trackChanges ) {
+            var auditor = await _manager.Auditor.GetOneAuditorByMachineName( trackChanges );
+            return _mapper.Map<AuditorDto>( auditor );
+        }
     }
 }

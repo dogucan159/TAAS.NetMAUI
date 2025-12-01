@@ -10,5 +10,6 @@ namespace TAAS.NetMAUI.Business.Interfaces {
     public interface IAuditorService {
         Task<AuditorDto> GetById( long id, bool trackChanges );
         Task<AuditorDto> GetByIdentificationNumber( String identificationNumber, bool trackChanges );
+        Task<AuditorDto> GetByMachineName( bool trackChanges );
     }
 }

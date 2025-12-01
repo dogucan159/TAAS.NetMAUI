@@ -10,6 +10,7 @@ namespace TAAS.NetMAUI.Infrastructure.Interfaces {
     public interface IAuditorRepository {
         Task<Auditor?> GetOneAuditorById( long id, bool trackChanges );
         Task<Auditor?> GetOneAuditorByIdentificationNumber( String identificationNumber, bool trackChanges );
+        Task<Auditor?> GetOneAuditorByMachineName( bool trackChanges );
         void CreateOneAuditor( Auditor auditor );
     }
 }

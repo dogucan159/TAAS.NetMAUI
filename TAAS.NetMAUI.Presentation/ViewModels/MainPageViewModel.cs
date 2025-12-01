@@ -21,19 +21,22 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         private ObservableCollection<AuditAssignmentDto> auditAssignments = new ObservableCollection<AuditAssignmentDto>();
 
         [ObservableProperty]
-        private String welcomeMessage = "Welcome Guest";
+        private String machineUserName = "Unknown";
 
         public MainPageViewModel( IServiceManager manager ) {
             _manager = manager;
         }
 
-        public async System.Threading.Tasks.Task LoadAuditAssignmentsAsync() {
-            var result = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
-            AuditAssignments = new ObservableCollection<AuditAssignmentDto>( result );
+        public async System.Threading.Tasks.Task InitMainPageAsync() {
+            try {
 
-            var sessionUserId = Preferences.Get( "SessionUserId", -1L );
-            var sessionUser = await _manager.AuditorService.GetById( sessionUserId, false );
-            WelcomeMessage = $"Welcome Dear {sessionUser.FirstName} {sessionUser.LastName}";
+                var result = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
+                AuditAssignments = new ObservableCollection<AuditAssignmentDto>( result );
+                MachineUserName = $"{System.Environment.MachineName}";
+            }
+            catch ( Exception ex ) {
+                await Shell.Current.DisplayAlert( "Error", ex.Message, "OK" );
+            }
         }
 
         [RelayCommand]

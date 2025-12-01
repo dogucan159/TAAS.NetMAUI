@@ -13,13 +13,11 @@ using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Core;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Core.Entities;
-using TAAS.NetMAUI.Presentation.Utilities;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
     public partial class AuditAssignmentSelectionViewModel : ObservableObject {
 
         private readonly IServiceManager _manager;
-        private readonly ITokenUtility _tokenUtility;
         [ObservableProperty]
         private string mainTaskEntry = "";
         [ObservableProperty]
@@ -34,9 +32,8 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         private AuditAssignmentDto selectedAuditAssignment;
         public bool HasSelected => SelectedAuditAssignment != null;
 
-        public AuditAssignmentSelectionViewModel( IServiceManager manager, ITokenUtility tokenUtility ) {
+        public AuditAssignmentSelectionViewModel( IServiceManager manager ) {
             _manager = manager;
-            _tokenUtility = tokenUtility;
         }
 
         [RelayCommand]
@@ -52,10 +49,8 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             try {
                 IsBusy = true;
                 AuditAssignments.Clear();
-                string token = await _tokenUtility.GetToken();
-                var sessionUserId = Preferences.Get( "SessionUserId", -1L );
-                var sessionUser = await _manager.AuditorService.GetById( sessionUserId, false );
-                List<AuditAssignmentDto>? apiAuditAssignments = await _manager.ApiService.PullAuditAssignments( MainTaskEntry, TaskTypeEntry, TaskEntry, token, sessionUser );
+
+                List<AuditAssignmentDto>? apiAuditAssignments = await _manager.ApiService.PullAuditAssignments( MainTaskEntry, TaskTypeEntry, TaskEntry );
                 if ( apiAuditAssignments != null && apiAuditAssignments.Count > 0 ) {
                     var dbAuditAssignments = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
                     if ( dbAuditAssignments != null && dbAuditAssignments.Count > 0 )

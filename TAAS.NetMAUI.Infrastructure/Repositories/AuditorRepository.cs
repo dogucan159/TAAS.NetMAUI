@@ -25,5 +25,9 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
         public async Task<Auditor?> GetOneAuditorByIdentificationNumber( string identificationNumber, bool trackChanges ) =>
             await FindByCondition( b => b.IdentificationNumber == identificationNumber, trackChanges )
             .SingleOrDefaultAsync();
+
+        public async Task<Auditor?> GetOneAuditorByMachineName( bool trackChanges ) =>
+            await FindByCondition( b => b.MachineName == System.Environment.MachineName, trackChanges )
+            .SingleOrDefaultAsync();
     }
 }

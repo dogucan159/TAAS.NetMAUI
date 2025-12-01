@@ -14,19 +14,7 @@ namespace TAAS.NetMAUI.Presentation {
         }
 
         protected override Window CreateWindow( IActivationState? activationState ) {
-            var sessionUserId = Preferences.Get( "SessionUserId", -1L );
-
-            Page startupPage;
-
-            if ( sessionUserId > 0 ) {
-                startupPage = new AppShell();
-            }
-            else {
-                var loginViewModel = _serviceProvider.GetRequiredService<LoginViewModel>();
-                startupPage = new LoginPage( loginViewModel );
-            }
-
-            return new Window( startupPage );
+            return new Window( new AppShell() );
 
 
         }

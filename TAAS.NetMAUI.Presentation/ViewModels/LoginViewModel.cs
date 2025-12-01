@@ -24,7 +24,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             _manager = manager;
         }
 
-        [RelayCommand]
+        /*[RelayCommand]
         private async System.Threading.Tasks.Task Login() {
             var auditorDto = await _manager.AuditorService.GetByIdentificationNumber( IdentificationNumber, false );
             if ( auditorDto != null && auditorDto.Password == PasswordHelper.Hash( Password ) ) {
@@ -38,7 +38,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 OnPropertyChanged( nameof( HasError ) );
 
             }
-        }
+        }*/
 
         [RelayCommand]
         private async System.Threading.Tasks.Task SetPassword() {
