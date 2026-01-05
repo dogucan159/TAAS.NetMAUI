@@ -7,6 +7,7 @@ using TAAS.NetMAUI.Core.Entities;
 
 namespace TAAS.NetMAUI.Infrastructure.Interfaces {
     public interface IChecklistAuditorRepository {
+        Task<ChecklistAuditor?> GetOneChecklistAuditorById( long id, bool trackChanges );
         Task<ChecklistAuditor?> GetOneChecklistAuditorByChecklistIdAndAuditorId( long checklistId, long auditorId, bool trackChanges );
 
     }

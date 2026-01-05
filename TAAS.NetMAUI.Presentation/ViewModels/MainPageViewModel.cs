@@ -20,8 +20,6 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         [ObservableProperty]
         private ObservableCollection<AuditAssignmentDto> auditAssignments = new ObservableCollection<AuditAssignmentDto>();
 
-        [ObservableProperty]
-        private String machineUserName = "Unknown";
 
         public MainPageViewModel( IServiceManager manager ) {
             _manager = manager;
@@ -31,8 +29,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             try {
 
                 var result = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
-                AuditAssignments = new ObservableCollection<AuditAssignmentDto>( result );
-                MachineUserName = $"{System.Environment.MachineName}";
+                AuditAssignments = new ObservableCollection<AuditAssignmentDto>( result );               
             }
             catch ( Exception ex ) {
                 await Shell.Current.DisplayAlert( "Error", ex.Message, "OK" );

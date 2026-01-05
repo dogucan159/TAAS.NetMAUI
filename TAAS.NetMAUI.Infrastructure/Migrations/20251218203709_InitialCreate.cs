@@ -446,6 +446,7 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                     SamplingRowNumber = table.Column<long>(type: "INTEGER", nullable: true),
                     ChecklistTemplateId = table.Column<long>(type: "INTEGER", nullable: false),
                     Turkish = table.Column<bool>(type: "INTEGER", nullable: true),
+                    Status = table.Column<string>(type: "TEXT", nullable: true),
                     ReviewedAuditorId = table.Column<long>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>

@@ -17,7 +17,7 @@ public partial class ChecklistDetailPage : ContentPage {
         if ( BindingContext is ChecklistDetailViewModel vm ) {
             await vm.LoadChecklistHeadersAndDetailsAsync();
             await vm.LoadChecklistFilesAsync();
-            vm.EvaluatePermissions();
+            await vm.EvaluatePermissions();
         }
     }
 

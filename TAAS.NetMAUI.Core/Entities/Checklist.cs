@@ -21,6 +21,7 @@ namespace TAAS.NetMAUI.Core.Entities {
         public ChecklistTemplate ChecklistTemplate { get; set; }
 
         public bool? Turkish { get; set; }
+        public string? Status { get; set; }
 
         public long? ReviewedAuditorId { get; set; }
         public Auditor? ReviewedAuditor { get; set; }

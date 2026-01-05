@@ -14,6 +14,7 @@ using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Core.Entities;
 using TAAS.NetMAUI.Presentation.Data;
 using TAAS.NetMAUI.Presentation.Models;
+using TAAS.NetMAUI.Shared;
 using Task = System.Threading.Tasks.Task;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
@@ -40,6 +41,15 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
 
         [ObservableProperty]
         private bool isEditable;
+
+        [ObservableProperty]
+        private bool isUndoFinalizeButtonVisible;
+
+        //[ObservableProperty]
+        //private bool isApproveButtonVisible;
+
+        //[ObservableProperty]
+        //private bool isUndoApproveButtonVisible;
 
 
         public bool HasChecklistFiles => FileList != null && FileList.Any();
@@ -124,12 +134,20 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             OnPropertyChanged( nameof( HasChecklistDetails ) );
         }
 
-        public void EvaluatePermissions() {
+        public async Task EvaluatePermissions() {
 
-            var auditorDto = _manager.AuditorService.GetByMachineName( false ).Result;
+            var auditorDto = await _manager.AuditorService.GetByMachineName( false );
 
-            IsEditable = auditorDto != null &&
-                         Checklist?.ChecklistAuditors?.Any( a => a.AuditorId == auditorDto.Id ) == true;
+            //bool isReviewer = auditorDto != null && Checklist?.ReviewedAuditor?.Id == auditorDto.Id;
+            bool isPreparer = auditorDto != null && Checklist?.ChecklistAuditors?.Any( a => a.AuditorId == auditorDto.Id ) == true;
+
+            IsEditable = isPreparer && Checklist?.Status == ChecklistStatusConst.INITIAL;
+
+            IsUndoFinalizeButtonVisible = isPreparer && Checklist?.Status == ChecklistStatusConst.FINALIZED;
+
+            //IsApproveButtonVisible = isReviewer && Checklist?.Status == ChecklistStatusConst.FINALIZED;
+
+            //IsUndoApproveButtonVisible = isReviewer && Checklist?.Status == ChecklistStatusConst.APPROVED;
         }
 
 
@@ -321,7 +339,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         }
 
         [RelayCommand]
-        private async Task DownloadFileAsync( UploadedFileItem uploadedFile ) {           
+        private async Task DownloadFileAsync( UploadedFileItem uploadedFile ) {
 
             try {
 
@@ -340,6 +358,118 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 await Shell.Current.DisplayAlert( "Error", "Failed to download file.", "OK" );
             }
         }
+
+
+        private async Task UpdateStatus() {
+            try {
+                await _manager.ChecklistService.Update( NavigationContext.CurrentChecklist.Id, new ChecklistUpdateDto() {
+                    Id = NavigationContext.CurrentChecklist.Id,
+                    Status = Checklist.Status
+                }, true );
+                //await EvaluatePermissions();
+                await NavigateToChecklistPage();
+            }
+            catch ( Exception ex ) {
+
+                throw new Exception( ex.Message );
+            }
+        }
+
+
+        [RelayCommand]
+        private async Task FinalizeChecklistAsync() {
+            try {
+                bool isConfirmed = await Shell.Current.DisplayAlert(
+                    "Confirm Finalization",
+                    "Are you sure you want to finalize the checklist?",
+                    "Yes", "No" );
+
+                if ( !isConfirmed )
+                    return;
+
+
+                //var auditorDto = _manager.AuditorService.GetByMachineName( false ).Result;
+
+                //bool isReviewer = auditorDto != null && Checklist?.ReviewedAuditor?.Id == auditorDto.Id;
+                //bool isPreparer = auditorDto != null && Checklist?.ChecklistAuditors?.Any( a => a.AuditorId == auditorDto.Id ) == true;
+
+                Checklist.Status = ChecklistStatusConst.FINALIZED;
+
+                await this.UpdateStatus();
+
+            }
+            catch ( Exception ex ) {
+                Debug.WriteLine( $"[FinalizeChecklistAsync] {ex.Message}" );
+                await Shell.Current.DisplayAlert( "Error", "Failed to finalize checklist.", "OK" );
+            }
+        }
+
+        [RelayCommand]
+        private async Task UndoFinalizeChecklistAsync() {
+            try {
+                bool isConfirmed = await Shell.Current.DisplayAlert(
+                    "Confirm Withdraw",
+                    "Are you sure you want to undo the finalization of the checklist?",
+                    "Yes", "No" );
+
+                if ( !isConfirmed )
+                    return;
+
+                Checklist.Status = ChecklistStatusConst.INITIAL;
+                await this.UpdateStatus();
+            }
+            catch ( Exception ex ) {
+                Debug.WriteLine( $"[UndoFinalizeChecklistAsync] {ex.Message}" );
+                await Shell.Current.DisplayAlert( "Error", "Failed to undo checklist.", "OK" );
+            }
+        }
+
+        //[RelayCommand]
+        //private async Task ApproveChecklistAsync() {
+        //    try {
+
+        //        bool isConfirmed = await Shell.Current.DisplayAlert(
+        //            "Confirm Deletion",
+        //            "Are you sure you want to approve the checklist?",
+        //            "Yes", "No" );
+
+        //        if ( !isConfirmed )
+        //            return;
+
+        //        Checklist.Status = "A";
+        //        await this.UpdateStatus();
+        //    }
+        //    catch ( Exception ex ) {
+        //        Debug.WriteLine( $"[ApproveChecklistAsync] {ex.Message}" );
+        //        await Shell.Current.DisplayAlert( "Error", "Failed to approve checklist.", "OK" );
+        //    }
+        //}
+
+        //[RelayCommand]
+        //private async Task UndoApproveChecklistAsync() {
+        //    try {
+
+        //        bool isConfirmed = await Shell.Current.DisplayAlert(
+        //            "Confirm Deletion",
+        //            "Are you sure you want to undo the approval of the checklist?",
+        //            "Yes", "No" );
+
+        //        if ( !isConfirmed )
+        //            return;
+
+        //        var auditorDto = _manager.AuditorService.GetByMachineName( false ).Result;
+
+        //        bool isReviewer = auditorDto != null && Checklist?.ReviewedAuditor?.Id == auditorDto.Id;
+        //        bool isPreparer = auditorDto != null && Checklist?.ChecklistAuditors?.Any( a => a.AuditorId == auditorDto.Id ) == true;
+
+        //        Checklist.Status = isReviewer && isPreparer ? ChecklistStatusConst.INITIAL : ChecklistStatusConst.FINALIZED;
+        //        await this.UpdateStatus();
+        //    }
+        //    catch ( Exception ex ) {
+        //        Debug.WriteLine( $"[UndoApproveChecklistAsync] {ex.Message}" );
+        //        await Shell.Current.DisplayAlert( "Error", "Failed to undo checklist.", "OK" );
+        //    }
+        //}
 
     }
 }

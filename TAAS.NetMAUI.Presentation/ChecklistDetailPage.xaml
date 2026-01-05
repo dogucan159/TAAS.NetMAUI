@@ -24,98 +24,102 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ScrollView>
-        <VerticalStackLayout Padding="5" Spacing="5">
-            <HorizontalStackLayout Margin="10" Spacing="5">
-                <Label Text="Main Page" Style="{StaticResource HmbHyperlinkStyle}">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding NavigateToMainPageCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
-                <Label Text=">" />
-                <Label Text="Checklists" Style="{StaticResource HmbHyperlinkStyle}">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding NavigateToChecklistPageCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
-                <Label Text=">" />
-                <Label Text="Checklist Detail" />
-            </HorizontalStackLayout>
-            <local:SelectedAuditAssignmentView />
+
+    <Grid RowDefinitions="*, Auto">
+
+        <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="5" Spacing="5">
-                <Label Text="Current Checklist" />
-                <Border>
-                    <Border.Content>
-                        <VerticalStackLayout>
-                            <Label IsVisible="{Binding Checklist.Institution, Converter={StaticResource ObjectNullToBoolConverter}}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Bodies: " FontAttributes="Bold" />
-                                        <Span Text="{Binding Checklist.Institution, Converter={StaticResource InstitutionToStringConverter}}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
+                <HorizontalStackLayout Margin="10" Spacing="5">
+                    <Label Text="Main Page" Style="{StaticResource HmbHyperlinkStyle}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NavigateToMainPageCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label Text=">" />
+                    <Label Text="Checklists" Style="{StaticResource HmbHyperlinkStyle}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NavigateToChecklistPageCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label Text=">" />
+                    <Label Text="Checklist Detail" />
+                </HorizontalStackLayout>
 
-                            <Label IsVisible="{Binding Checklist.KeyRequirement, Converter={StaticResource ObjectNullToBoolConverter}}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Key Requirement: " FontAttributes="Bold" />
-                                        <Span Text="{Binding Checklist.KeyRequirement, Converter={StaticResource KeyRequirementToStringConverter}}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label IsVisible="{Binding Checklist.SpecificFunction, Converter={StaticResource ObjectNullToBoolConverter}}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Specific Function: " FontAttributes="Bold" />
-                                        <Span Text="{Binding Checklist.SpecificFunction, Converter={StaticResource SpecificFunctionToStringConverter}}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label IsVisible="{Binding Checklist.Comment, Converter={StaticResource StringNullToBoolConverter}}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Comment: " FontAttributes="Bold" />
-                                        <Span Text="{Binding Checklist.Comment}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label>
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Checklist Template: " FontAttributes="Bold" />
-                                        <Span Text="{Binding Checklist.ChecklistTemplate, Converter={StaticResource ChecklistTemplateToStringConverter}}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <HorizontalStackLayout Spacing="10">
-                                <Label Text="Turkish:" VerticalOptions="Center" FontAttributes="Bold"/>
-                                <CheckBox IsChecked="{Binding Checklist.Turkish}" IsEnabled="False" />
-                            </HorizontalStackLayout>
-                            <Label>
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Reviewer: " FontAttributes="Bold" />
-                                        <Span Text="{Binding Checklist.ReviewedAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label>
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Auditors: " FontAttributes="Bold" />
-                                        <Span Text="{Binding Checklist.ChecklistAuditors, Converter={StaticResource ChecklistAuditorsToStringConverter}}"/>
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
+                <local:SelectedAuditAssignmentView />
 
-                        </VerticalStackLayout>
-                    </Border.Content>
-                </Border>
-            </VerticalStackLayout>
+                <VerticalStackLayout Padding="5" Spacing="5">
+                    <Label Text="Current Checklist" />
+                    <Border>
+                        <Border.Content>
+                            <VerticalStackLayout>
+                                <Label IsVisible="{Binding Checklist.Institution, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Bodies: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Checklist.Institution, Converter={StaticResource InstitutionToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
 
-            <!--Headers-->
-            <ScrollView>
+                                <Label IsVisible="{Binding Checklist.KeyRequirement, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Key Requirement: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Checklist.KeyRequirement, Converter={StaticResource KeyRequirementToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label IsVisible="{Binding Checklist.SpecificFunction, Converter={StaticResource ObjectNullToBoolConverter}}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Specific Function: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Checklist.SpecificFunction, Converter={StaticResource SpecificFunctionToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label IsVisible="{Binding Checklist.Comment, Converter={StaticResource StringNullToBoolConverter}}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Comment: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Checklist.Comment}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Checklist Template: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Checklist.ChecklistTemplate, Converter={StaticResource ChecklistTemplateToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <HorizontalStackLayout Spacing="10">
+                                    <Label Text="Turkish:" VerticalOptions="Center" FontAttributes="Bold"/>
+                                    <CheckBox IsChecked="{Binding Checklist.Turkish}" IsEnabled="False" />
+                                </HorizontalStackLayout>
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Reviewer: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Checklist.ReviewedAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Auditors: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Checklist.ChecklistAuditors, Converter={StaticResource ChecklistAuditorsToStringConverter}}"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                            </VerticalStackLayout>
+                        </Border.Content>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!--Headers-->
                 <VerticalStackLayout Padding="5" Spacing="5">
                     <Label Text="Headers"/>
                     <Border>
@@ -125,15 +129,15 @@
                                     <DataTemplate>
                                         <Grid ColumnDefinitions="1*,4*" Padding="10" ColumnSpacing="15">
                                             <Label Text="{Binding ChecklistTemplateHeader.Name}" 
-                                               HorizontalOptions="Start" />
+                                   HorizontalOptions="Start" />
                                             <Entry Text="{Binding Value, Mode=TwoWay}" 
-                                               Grid.Column="1"
-                                               Unfocused="HeaderValue_Unfocused"
-                                               IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=IsEditable}" 
-                                               HeightRequest="50"
-                                               Margin="5,0"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="Fill" />
+                                   Grid.Column="1"
+                                   Unfocused="HeaderValue_Unfocused"
+                                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=IsEditable}" 
+                                   HeightRequest="50"
+                                   Margin="5,0"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Fill" />
                                         </Grid>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
@@ -142,15 +146,14 @@
                     </Border>
                     <VerticalStackLayout.Triggers>
                         <DataTrigger TargetType="VerticalStackLayout"
-                                 Binding="{Binding HasChecklistHeaders}"
-                                 Value="True">
+                     Binding="{Binding HasChecklistHeaders}"
+                     Value="True">
                             <Setter Property="IsVisible" Value="True" />
                         </DataTrigger>
                     </VerticalStackLayout.Triggers>
                 </VerticalStackLayout>
-            </ScrollView>
-            <!--Details-->
-            <ScrollView>
+
+                <!--Details-->
                 <VerticalStackLayout Padding="5" Spacing="5">
                     <Label Text="Details" />
                     <Border>
@@ -228,30 +231,29 @@
                         </Border.Content>
                     </Border>
                 </VerticalStackLayout>
-            </ScrollView>
 
-            <!-- Photo Upload -->
-            <VerticalStackLayout Padding="5" Spacing="5">
-                <Label Text="Photos" />
-                <Border>
-                    <Border.Content>
-                        <VerticalStackLayout x:Name="FilesSection" IsVisible="False">
-                            <CollectionView ItemsSource="{Binding FileList}" ItemsLayout="HorizontalList" HeightRequest="200">
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border>
-                                            <Border.Content>
-                                                <Grid>
+                <!-- Photo Upload -->
+                <VerticalStackLayout Padding="5" Spacing="5">
+                    <Label Text="Photos" />
+                    <Border>
+                        <Border.Content>
+                            <VerticalStackLayout x:Name="FilesSection" IsVisible="False">
+                                <CollectionView ItemsSource="{Binding FileList}" ItemsLayout="HorizontalList" HeightRequest="200">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border>
+                                                <Border.Content>
+                                                    <Grid>
 
-                                                    <Image Source="{Binding PhotoImage}" HeightRequest="150" Aspect="AspectFill">
-                                                        <Image.GestureRecognizers>
-                                                            <TapGestureRecognizer
+                                                        <Image Source="{Binding PhotoImage}" HeightRequest="150" Aspect="AspectFill">
+                                                            <Image.GestureRecognizers>
+                                                                <TapGestureRecognizer
                                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=DownloadPhotoCommand}"
                                                                 CommandParameter="{Binding .}" />
-                                                        </Image.GestureRecognizers>
-                                                    </Image>
+                                                            </Image.GestureRecognizers>
+                                                        </Image>
 
-                                                    <Button Text="✕"
+                                                        <Button Text="✕"
                                                          BackgroundColor="Transparent"                                            
                                                          TextColor="Red"
                                                          FontAttributes="Bold"
@@ -263,78 +265,104 @@
                                                          Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=DeletePhotoCommand}"
                                                          CommandParameter="{Binding .}" 
                                                          IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=IsEditable}"/>
-                                                </Grid>
-                                            </Border.Content>
+                                                    </Grid>
+                                                </Border.Content>
 
-                                        </Border>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
 
-                            <VerticalStackLayout.Triggers>
-                                <DataTrigger TargetType="VerticalStackLayout"
+                                <VerticalStackLayout.Triggers>
+                                    <DataTrigger TargetType="VerticalStackLayout"
                                  Binding="{Binding HasChecklistFiles}"
                                  Value="True">
-                                    <Setter Property="IsVisible" Value="True" />
-                                </DataTrigger>
-                            </VerticalStackLayout.Triggers>
-                        </VerticalStackLayout>
-                    </Border.Content>
-                </Border>
-                <Button Text="Take Photo and Upload"
+                                        <Setter Property="IsVisible" Value="True" />
+                                    </DataTrigger>
+                                </VerticalStackLayout.Triggers>
+                            </VerticalStackLayout>
+                        </Border.Content>
+                    </Border>
+                    <Button Text="Take Photo and Upload"
                     Command="{Binding TakePhotoCommand}"
                     IsVisible="{Binding IsEditable}"
                     CornerRadius="8" />
-            </VerticalStackLayout>
+                </VerticalStackLayout>
 
-            <!--FileUpload-->
-            <VerticalStackLayout Padding="5" Spacing="5">
-                <Label Text="Files" />
-                <Border>
-                    <Border.Content>
-                        <VerticalStackLayout>
-                            <CollectionView ItemsSource="{Binding UploadedFileList}">
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Padding="1" ColumnDefinitions="3*,2*,Auto" RowDefinitions="Auto">
-                                            <Label
+                <!--FileUpload-->
+                <VerticalStackLayout Padding="5" Spacing="5">
+                    <Label Text="Files" />
+                    <Border>
+                        <Border.Content>
+                            <VerticalStackLayout>
+                                <CollectionView ItemsSource="{Binding UploadedFileList}">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Padding="1" ColumnDefinitions="3*,2*,Auto" RowDefinitions="Auto">
+                                                <Label
                                                 Grid.Column="0"
                                                 Text="{Binding FileName}"
                                                 Style="{StaticResource HmbHyperlinkStyle}"
                                                 HorizontalOptions="Start">
-                                                <Label.GestureRecognizers>
-                                                    <TapGestureRecognizer
+                                                    <Label.GestureRecognizers>
+                                                        <TapGestureRecognizer
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=DownloadFileCommand}"
                                                         CommandParameter="{Binding .}" />
-                                                </Label.GestureRecognizers>
-                                            </Label>
-                                            <!--<Label Text="{Binding Extension}" Grid.Column="1" />-->
-                                            <Label Text="{Binding Size}" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" />
-                                            <Button 
+                                                    </Label.GestureRecognizers>
+                                                </Label>
+                                                <!--<Label Text="{Binding Extension}" Grid.Column="1" />-->
+                                                <Label Text="{Binding Size}" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" />
+                                                <Button 
                                                 IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=IsEditable}"
                                                 Text="Delete"
                                                 Grid.Column="2"
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChecklistDetailViewModel}}, Path=DeleteFileCommand}"
                                                 CommandParameter="{Binding .}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
-                            <VerticalStackLayout.Triggers>
-                                <DataTrigger TargetType="VerticalStackLayout"
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                                <VerticalStackLayout.Triggers>
+                                    <DataTrigger TargetType="VerticalStackLayout"
                                  Binding="{Binding HasUploadedFiles}"
                                  Value="True">
-                                    <Setter Property="IsVisible" Value="True" />
-                                </DataTrigger>
-                            </VerticalStackLayout.Triggers>
-                        </VerticalStackLayout>
-                    </Border.Content>
-                </Border>
-                <Button Text="Upload Files"
+                                        <Setter Property="IsVisible" Value="True" />
+                                    </DataTrigger>
+                                </VerticalStackLayout.Triggers>
+                            </VerticalStackLayout>
+                        </Border.Content>
+                    </Border>
+                    <Button Text="Upload Files"
                     Command="{Binding UploadFileCommand}" 
                     IsVisible="{Binding IsEditable}"
                     CornerRadius="8"/>
+                </VerticalStackLayout>
             </VerticalStackLayout>
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+
+        <Grid Grid.Row="1" 
+              Padding="10">
+            
+            <Button Text="Finalize" HorizontalOptions="Fill"
+                        Command="{Binding FinalizeChecklistCommand}"
+                        IsVisible="{Binding IsEditable}"
+                        Style="{StaticResource SaveButtonStyle}"/>
+            <Button Text="Undo Finalize" HorizontalOptions="Fill"
+                        Command="{Binding UndoFinalizeChecklistCommand}"
+                        IsVisible="{Binding IsUndoFinalizeButtonVisible}"
+                        Style="{StaticResource CancelButtonStyle}"/>
+
+            <!--<Button Text="Approve" HorizontalOptions="Fill"
+                        Command="{Binding ApproveChecklistCommand}"
+                        IsVisible="{Binding IsApproveButtonVisible}"
+                        Style="{StaticResource SaveButtonStyle}"/>
+            
+            <Button Text="Undo Approve" HorizontalOptions="Fill"
+                        Command="{Binding UndoApproveChecklistCommand}" 
+                        IsVisible="{Binding IsUndoApproveButtonVisible}"
+                        Style="{StaticResource CancelButtonStyle}"/>-->
+
+        </Grid>
+
+    </Grid>
 </ContentPage>

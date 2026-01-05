@@ -62,6 +62,15 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 return;
             else {
                 try {
+
+                    bool isConfirmed = await Shell.Current.DisplayAlert(
+                        "Confirm Deletion",
+                        "Are you sure you want to transfer checklists to the web service?",
+                        "Yes", "No" );
+
+                    if ( !isConfirmed )
+                        return;
+
                     IsBusy = true;
                     //CODE HERE
                     bool isDeleteAfterTransfer = DeleteAfterTransfer;
@@ -70,8 +79,8 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                         NavigationContext.CurrentAuditType.Id, true );
 
                     if ( checklists.Any() ) {
-
-                        await _manager.ApiService.TransferChecklistsToLive( checklists );
+                        var auditorDto = await _manager.AuditorService.GetByMachineName( false );
+                        await _manager.ApiService.TransferChecklistsToLive( checklists, auditorDto );
                         await Shell.Current.DisplayAlert( "Success", "Unsynced files transferred to live!", "OK" );
 
                         await LoadChecklistsAsync();

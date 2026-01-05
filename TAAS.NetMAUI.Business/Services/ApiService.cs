@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
@@ -32,10 +34,22 @@ namespace TAAS.NetMAUI.Business.Services {
         private readonly IMapper _mapper;
         private readonly EndpointSettings _endpointSettings;
 
+        private JsonSerializerSettings globalJsonSerializerSettings = new JsonSerializerSettings {
+            Culture = CultureInfo.GetCultureInfo( "tr-TR" )
+        };
+
+
         public ApiService( IRepositoryManager manager, IMapper mapper ) {
             _manager = manager;
             _mapper = mapper;
             _endpointSettings = ApiConfigProvider.GetEndpointSettings();
+
+
+            globalJsonSerializerSettings.Converters.Add( new IsoDateTimeConverter {
+                DateTimeFormat = "dd.MM.yyyy HH:mm:ss",
+                Culture = CultureInfo.GetCultureInfo( "tr-TR" )
+            } );
+
         }
 
         public async Task<string> GetToken() {
@@ -101,7 +115,7 @@ namespace TAAS.NetMAUI.Business.Services {
                     ilike = new { mainTaskCode = mainTask, taskTypeCode = taskType, taskCode = task },
                     page = 0,
                     size = 20,
-                    userIdentity = System.Environment.MachineName
+                    userIdentity = System.Environment.UserName
                 };
 
                 var json = System.Text.Json.JsonSerializer.Serialize( payload );
@@ -136,14 +150,15 @@ namespace TAAS.NetMAUI.Business.Services {
 
             var payload = new {
                 auditAssignmentId,
-                auditTypeId
+                auditTypeId,
+                auditorIdentity = System.Environment.UserName
             };
 
             var json = System.Text.Json.JsonSerializer.Serialize( payload );
             var content = new StringContent( json, Encoding.UTF8, "application/json" );
             List<ChecklistDto>? result = null;
             try {
-                var response = await client.PostAsync( $"{_endpointSettings.ControllerName}checklist/getByAuditAssignmentIdAndAuditTypeId", content );
+                var response = await client.PostAsync( $"{_endpointSettings.ControllerName}checklist/getByAuditAssignmentIdAndAuditTypeIdAndAuditorIdentityAndOfflineIsNullOrFalse", content );
                 response.EnsureSuccessStatusCode();
                 var checklistsJsonString = await response.Content.ReadAsStringAsync();
                 result = JsonConvert.DeserializeObject<List<ChecklistDto>>( checklistsJsonString );
@@ -170,7 +185,7 @@ namespace TAAS.NetMAUI.Business.Services {
                     var response = await client.GetAsync( $"{_endpointSettings.ControllerName}checklist?id={id}" );
                     response.EnsureSuccessStatusCode();
                     var checklistJsonString = await response.Content.ReadAsStringAsync();
-                    result = JsonConvert.DeserializeObject<ChecklistDto>( checklistJsonString );
+                    result = JsonConvert.DeserializeObject<ChecklistDto>( checklistJsonString, globalJsonSerializerSettings );
                 }
                 catch ( HttpRequestException ex ) {
                     throw new Exception( ex.Message );
@@ -193,7 +208,7 @@ namespace TAAS.NetMAUI.Business.Services {
                 string token = await GetToken();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
                 var payload = new {
-                    eq = new { machineName = System.Environment.MachineName },
+                    eq = new { machineName = System.Environment.UserName },
                     page = 0,
                     size = 20,
                 };
@@ -390,6 +405,7 @@ namespace TAAS.NetMAUI.Business.Services {
 
                 Checklist checklist = new Checklist() {
                     Id = checklistDto.Id,
+                    Status = checklistDto.Status,
                     ChecklistAuditors = new List<ChecklistAuditor>(),
                     ChecklistTaasFiles = new List<ChecklistTaasFile>(),
                 };
@@ -475,11 +491,12 @@ namespace TAAS.NetMAUI.Business.Services {
                 //ChecklistAuditors
                 if ( checklistDto.ChecklistAuditors.Any() ) {
                     foreach ( var checklistAuditor in checklistDto.ChecklistAuditors ) {
-                        var dbChecklistAuditor = await _manager.ChecklistAuditor.GetOneChecklistAuditorByChecklistIdAndAuditorId( checklistDto.Id, checklistAuditor.AuditorId, true );
+                        var dbChecklistAuditor = await _manager.ChecklistAuditor.GetOneChecklistAuditorById( checklistAuditor.Id, true );
                         if ( dbChecklistAuditor != null )
                             checklist.ChecklistAuditors.Add( dbChecklistAuditor );
                         else {
-                            ChecklistAuditor newChecklistAuditor = new ChecklistAuditor() { Checklist = checklist };
+                            ChecklistAuditor newChecklistAuditor = new ChecklistAuditor() { Id = checklistAuditor.Id, Checklist = checklist };
+
                             var dbAuditor = await _manager.Auditor.GetOneAuditorById( checklistAuditor.AuditorId, true );
                             if ( dbAuditor != null )
                                 newChecklistAuditor.Auditor = dbAuditor;
@@ -487,6 +504,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                 var auditor = _mapper.Map<Auditor>( checklistAuditor.Auditor );
                                 newChecklistAuditor.Auditor = auditor;
                             }
+                            //ChecklistAuditor newChecklistAuditor = _mapper.Map<ChecklistAuditor>( checklistAuditor );
                             checklist.ChecklistAuditors.Add( newChecklistAuditor );
                         }
                     }
@@ -536,7 +554,7 @@ namespace TAAS.NetMAUI.Business.Services {
             }
         }
 
-        public async System.Threading.Tasks.Task TransferChecklistsToLive( List<ChecklistDto> lstChecklistDto ) {
+        public async System.Threading.Tasks.Task TransferChecklistsToLive( List<ChecklistDto> lstChecklistDto, AuditorDto auditorDto ) {
             try {
                 //https://dev-taas.hmb.gov.tr/backend/
                 HttpClient client = new() {
@@ -551,7 +569,7 @@ namespace TAAS.NetMAUI.Business.Services {
                     //var checklistTaasFiles = _mapper.Map<List<ChecklistTaasFile>>( checklistDto.ChecklistTaasFiles );
 
                     if ( checklistDto.ChecklistTaasFiles?.Any() == true ) {
-                        var createdChecklistTaasFiles = checklistDto.ChecklistTaasFiles.Where( i => !i.Deleted.HasValue || ( i.Deleted.HasValue && !i.Deleted.Value ) );
+                        var createdChecklistTaasFiles = checklistDto.ChecklistTaasFiles.Where( i => ( !i.Deleted.HasValue || !i.Deleted.Value ) && ( !i.Synched.HasValue || !i.Synched.Value ) );
 
                         if ( createdChecklistTaasFiles.Any() ) {
                             foreach ( var createdChecklistTaasFile in createdChecklistTaasFiles ) {
@@ -566,10 +584,11 @@ namespace TAAS.NetMAUI.Business.Services {
                                 var taasFileContent = new StringContent( taasFileJson, Encoding.UTF8, "application/json" );
                                 TaasFileDto? result = null;
                                 try {
-                                    var response = await client.PostAsync( $"{_endpointSettings.ControllerName}taas-file/create-with-file-data", taasFileContent );
+                                    var response = await client.PostAsync( $"{_endpointSettings.ControllerName}taas-file/createWithFileData", taasFileContent );
                                     response.EnsureSuccessStatusCode();
                                     var taasFileJsonString = await response.Content.ReadAsStringAsync();
-                                    result = JsonConvert.DeserializeObject<TaasFileDto>( taasFileJsonString );
+
+                                    result = JsonConvert.DeserializeObject<TaasFileDto>( taasFileJsonString, globalJsonSerializerSettings );
 
                                     //bu degerleri veritabaninda guncelle
                                     var dbTaasFile = await _manager.TaasFile.GetOneTaasFileById( createdChecklistTaasFile.TaasFileId, true );
@@ -738,6 +757,33 @@ namespace TAAS.NetMAUI.Business.Services {
                             }
                         }
                     }
+
+                    //Status
+                    //Finalize
+                    try {
+                        ChecklistAuditorDto? checklistAuditorDto = checklistDto.ChecklistAuditors?.FirstOrDefault( a => a.AuditorId == auditorDto.Id );
+                        if ( checklistDto.Status == ChecklistStatusConst.FINALIZED && checklistAuditorDto?.AuditorId == auditorDto.Id ) {
+                            string endpoint = $"{_endpointSettings.ControllerName}checklist/{checklistDto.Id}/checklist-auditor/{checklistAuditorDto.Id}/finalize";
+                            var response = await client.PostAsync( endpoint, null );
+                            response.EnsureSuccessStatusCode();
+                        }
+                    }
+                    catch ( HttpRequestException ex ) {
+                        throw new Exception( ex.Message );
+                    }
+
+                    ////Approve
+                    //try {
+                    //    ChecklistAuditorDto? checklistAuditorDto = checklistDto.ChecklistAuditors?.FirstOrDefault( a => a.AuditorId == auditorDto.Id );
+                    //    if ( checklistDto.Status == ChecklistStatusConst.APPROVED && checklistAuditorDto?.AuditorId == auditorDto.Id ) {
+                    //        string endpoint = $"{_endpointSettings.ControllerName}checklist/{checklistDto.Id}/checklist-auditor/{checklistAuditorDto.Id}/approve";
+                    //        var response = await client.PostAsync( endpoint, null );
+                    //        response.EnsureSuccessStatusCode();
+                    //    }
+                    //}
+                    //catch ( HttpRequestException ex ) {
+                    //    throw new Exception( ex.Message );
+                    //}
 
                     //Delete Checklist
                     var dbChecklist = await _manager.Checklist.GetOneChecklistById( checklistDto.Id, true );

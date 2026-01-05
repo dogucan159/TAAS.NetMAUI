@@ -16,6 +16,8 @@ public partial class QuestionDetailPage : ContentPage {
 
     private string _pendingHtmlContent;
 
+    private bool IsTappedBorderReadOnly;
+
     private IEnumerable<ChecklistDetailTaasFileDto> checklistDetailTaasFiles;
 
     public ObservableCollection<TaasFileItem> FileList = new ObservableCollection<TaasFileItem>();
@@ -54,6 +56,13 @@ public partial class QuestionDetailPage : ContentPage {
         FilesCollectionView.ItemsSource = FileList;
 
         await LoadEditorHtmlAsync();
+
+        var auditorDto = await _manager.AuditorService.GetByMachineName( false );
+
+        bool isPreparer = auditorDto != null && NavigationContext.CurrentChecklist?.ChecklistAuditors?.Any( a => a.AuditorId == auditorDto.Id ) == true;
+
+        SaveButton.IsVisible = isPreparer && ( NavigationContext.CurrentChecklist?.Status == "I" || NavigationContext.CurrentChecklist?.Status == "PF" );
+
     }
 
     private List<TaasFileItem> ConvertTaasFileToTaasFileItem( IEnumerable<TaasFileDto> taasFiles, IEnumerable<ChecklistDetailTaasFileDto> checklistDetailTaasFiles ) {

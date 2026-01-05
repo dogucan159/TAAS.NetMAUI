@@ -38,6 +38,7 @@ namespace TAAS.NetMAUI.Presentation {
             CreateMap<ChecklistTemplateDetailDto, ChecklistTemplateDetail>().ReverseMap();
             CreateMap<ChecklistHeaderDto, ChecklistHeader>().ReverseMap();
             CreateMap<ChecklistHeaderUpdateDto, ChecklistHeader>();
+            CreateMap<ChecklistUpdateDto, Checklist>();
             CreateMap<ChecklistTemplateHeaderDto, ChecklistTemplateHeader>().ReverseMap();
             CreateMap<TaasFileDto, TaasFile>().ReverseMap();
             CreateMap<TaasFileCreateDto, TaasFile>();

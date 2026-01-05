@@ -20,6 +20,7 @@ namespace TAAS.NetMAUI.Presentation.Models {
                     SamplingRowNumber = checklist.SamplingRowNumber,
                     ChecklistTemplate = checklist.ChecklistTemplate,
                     Turkish = checklist.Turkish,
+                    Status = checklist.Status,
                     ReviewedAuditor = checklist.ReviewedAuditor,
                     ChecklistAuditors = checklist.ChecklistAuditors,
                 } );

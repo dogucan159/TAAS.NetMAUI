@@ -21,7 +21,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>TAAS.NetMAUI.Presentation</ApplicationTitle>
+		<ApplicationTitle>TAAS Desktop</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.taas.netmaui.presentation</ApplicationId>
@@ -47,16 +47,16 @@
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<AppInstallerUri>C:\Users\doguc\OneDrive\Masaüstü\TaasInstaller</AppInstallerUri>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-		<PackageCertificateThumbprint>54A9459BDAE6ACCAA3C9722BE7AF8486AF394976</PackageCertificateThumbprint>
+		<PackageCertificateThumbprint>818B40111407084BCB0EFEFBF27FECA3AA771BC3</PackageCertificateThumbprint>
 		<Configurations>Debug;Release;Release-Test;Release-Prod;Debug-Test</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#0F265C" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#1251fd" BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />

@@ -269,6 +269,9 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                     b.Property<long?>("SamplingRowNumber")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool?>("Turkish")
                         .HasColumnType("INTEGER");
 

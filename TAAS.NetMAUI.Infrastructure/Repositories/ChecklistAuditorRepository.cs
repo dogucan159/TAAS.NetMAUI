@@ -18,5 +18,9 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
         public async Task<ChecklistAuditor?> GetOneChecklistAuditorByChecklistIdAndAuditorId( long checklistId, long auditorId, bool trackChanges ) =>
             await FindByCondition( b => b.ChecklistId == checklistId && b.AuditorId == auditorId, trackChanges )
             .SingleOrDefaultAsync();
+
+        public async Task<ChecklistAuditor?> GetOneChecklistAuditorById( long id, bool trackChanges ) =>
+            await FindByCondition( b => b.Id == id, trackChanges )
+                .SingleOrDefaultAsync();
     }
 }

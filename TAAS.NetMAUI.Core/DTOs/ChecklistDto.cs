@@ -25,8 +25,11 @@ namespace TAAS.NetMAUI.Core.DTOs {
 
         public bool? Turkish { get; set; }
 
+        public string? Status { get; set; }
+
         public long? ReviewedAuditorId { get; set; }
         public AuditorDto? ReviewedAuditor { get; set; }
+
 
         public ICollection<ChecklistAuditorDto> ChecklistAuditors { get; set; }
         public ICollection<ChecklistHeaderDto> ChecklistHeaders { get; set; }

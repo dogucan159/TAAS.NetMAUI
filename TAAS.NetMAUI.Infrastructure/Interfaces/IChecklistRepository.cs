@@ -11,6 +11,7 @@ namespace TAAS.NetMAUI.Infrastructure.Interfaces {
         Task<List<Checklist>> GetChecklistsByAuditAssignmentIdAndAuditTypeId( long auditAssignmentId, long audiTypeId, bool trackChanges );
         Task<List<Checklist>> GetChecklistsWithDetailsByAuditAssignmentIdAndAuditTypeId( long auditAssignmentId, long audiTypeId, bool trackChanges );
         void CreateOneChecklist( Checklist checklist );
+        void UpdateOneChecklist( Checklist checklist );
         void DeleteOneChecklist( Checklist checklist );
     }
 }

@@ -6,7 +6,7 @@
              xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters">
 
     <Shell.TitleView>
-        <local:ShellTitleView ViewTitle="Question Detail" />        
+        <local:ShellTitleView ViewTitle="Question Detail" />
     </Shell.TitleView>
 
     <ContentPage.Resources>
@@ -80,6 +80,7 @@
                                     </Label>
                                 </VerticalStackLayout>
                             </Border.Content>
+
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -91,9 +92,10 @@
             VerticalOptions="Fill"
             Grid.Row="4" />
 
-        <Button Text="Save"
-                    Grid.Row="5"
-                    Clicked="OnSaveClicked" />
+        <Button x:Name="SaveButton" 
+                Text="Save"
+                Grid.Row="5"
+                Clicked="OnSaveClicked" />
     </Grid>
 
 

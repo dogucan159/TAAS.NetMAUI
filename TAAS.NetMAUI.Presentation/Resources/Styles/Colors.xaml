@@ -22,6 +22,7 @@
     <Color x:Key="HmbHyperlink">#1251fd</Color>
     <Color x:Key="HmbPrimaryButton">#1251fd</Color>
     <Color x:Key="HmbCancelButton">#fa0</Color>
+    <Color x:Key="HmbSaveButton">#00b200</Color>
 
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>

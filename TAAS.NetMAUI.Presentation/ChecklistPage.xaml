@@ -18,6 +18,7 @@
             <converters:KeyRequirementToStringConverter x:Key="KeyRequirementToStringConverter" />
             <converters:SpecificFunctionToStringConverter x:Key="SpecificFunctionToStringConverter" />
             <converters:ChecklistTemplateToStringConverter x:Key="ChecklistTemplateToStringConverter" />
+            <converters:ChecklistStatusToStatusLongConverter x:Key="ChecklistStatusToStatusLongConverter" />
             <converters:ObjectNullToBoolConverter x:Key="ObjectNullToBoolConverter" />
             <converters:StringNullToBoolConverter x:Key="StringNullToBoolConverter" />
         </ResourceDictionary>
@@ -187,6 +188,14 @@
                                                     <FormattedString>
                                                         <Span Text="Auditors: " FontAttributes="Bold" />
                                                         <Span Text="{Binding ChecklistAuditors, Converter={StaticResource ChecklistAuditorsToStringConverter}}"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <Label>
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="Status: " FontAttributes="Bold" />
+                                                        <Span Text="{Binding Status, Converter={StaticResource ChecklistStatusToStatusLongConverter}}" />
                                                     </FormattedString>
                                                 </Label.FormattedText>
                                             </Label>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TAAS.NetMAUI.Core.Entities;
 
 namespace TAAS.NetMAUI.Core.DTOs {
-    public class ChecklistAuditorDto {
+    public class ChecklistAuditorDto : BaseDto {
         public long ChecklistId { get; set; }
         public ChecklistDto Checklist { get; set; }
 

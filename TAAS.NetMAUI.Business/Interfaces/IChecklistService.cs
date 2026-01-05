@@ -10,5 +10,6 @@ namespace TAAS.NetMAUI.Business.Interfaces {
     public interface IChecklistService {
         Task<List<ChecklistDto>> GetChecklistsByAuditAssignmentIdAndAuditTypeId( long auditAssignmentId, long auditTypeId, bool trackChanges );
         Task<List<ChecklistDto>> GetChecklistsWithDetailsByAuditAssignmentIdAndAuditTypeId( long auditAssignmentId, long auditTypeId, bool trackChanges );
+        Task Update( long id, ChecklistUpdateDto checklistDto, bool trackChanges );
     }
 }

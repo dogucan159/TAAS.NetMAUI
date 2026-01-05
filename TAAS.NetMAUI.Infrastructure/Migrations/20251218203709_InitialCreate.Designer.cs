@@ -11,7 +11,7 @@ using TAAS.NetMAUI.Infrastructure.Data;
 namespace TAAS.NetMAUI.Infrastructure.Migrations
 {
     [DbContext(typeof(TaasDbContext))]
-    [Migration("20251129182801_InitialCreate")]
+    [Migration("20251218203709_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -271,6 +271,9 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
 
                     b.Property<long?>("SamplingRowNumber")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool?>("Turkish")
                         .HasColumnType("INTEGER");

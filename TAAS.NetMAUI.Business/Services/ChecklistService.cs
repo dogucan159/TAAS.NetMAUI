@@ -29,5 +29,12 @@ namespace TAAS.NetMAUI.Business.Services {
             var checklists = await _manager.Checklist.GetChecklistsWithDetailsByAuditAssignmentIdAndAuditTypeId( auditAssignmentId, auditTypeId, trackChanges );
             return _mapper.Map<List<ChecklistDto>>( checklists );
         }
+
+        public async System.Threading.Tasks.Task Update( long id, ChecklistUpdateDto checklistDto, bool trackChanges ) {
+            var dbChecklist = await _manager.Checklist.GetOneChecklistById( id, trackChanges );
+            _mapper.Map( checklistDto, dbChecklist );
+            _manager.Checklist.UpdateOneChecklist( dbChecklist );
+            await _manager.SaveAsync();
+        }
     }
 }

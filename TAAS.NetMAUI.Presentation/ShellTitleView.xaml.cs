@@ -8,7 +8,7 @@ public partial class ShellTitleView : ContentView
 	{
 		InitializeComponent();
 
-        MachineUserName = Environment.MachineName;
+        MachineUserName = Environment.UserName;
 
     }
 

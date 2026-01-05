@@ -41,6 +41,7 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
             await FindByCondition( b => b.AuditAssignmentId == auditAssignmentId && b.AuditTypeId == audiTypeId, trackChanges )
                 .Include( b => b.ChecklistTaasFiles )
                 .ThenInclude( b => b.TaasFile )
+                .Include( b => b.ChecklistAuditors )
                 .Include( b => b.ChecklistHeaders )
                 .Include( b => b.ChecklistDetails )
                 .ThenInclude( b => b.ChecklistDetailTaasFiles )
@@ -51,5 +52,7 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
             await FindByCondition( b => b.Id == id, trackChanges )
                 .Include( b => b.ChecklistTemplate )
                 .SingleOrDefaultAsync();
+
+        public void UpdateOneChecklist( Checklist checklist ) => Update( checklist );
     }
 }

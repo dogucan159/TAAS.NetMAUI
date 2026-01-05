@@ -19,6 +19,7 @@ namespace TAAS.NetMAUI.Presentation.Models
         public required ChecklistTemplateDto ChecklistTemplate { get; set; }
         public bool? Turkish { get; set; }
         public AuditorDto? ReviewedAuditor { get; set; }
+        public string? Status { get; set; }
 
         public ICollection<ChecklistAuditorDto>? ChecklistAuditors { get; set; }
 
