@@ -15,5 +15,7 @@ namespace TAAS.NetMAUI.Business.Interfaces {
         System.Threading.Tasks.Task SyncAuditAssignmentAsync( AuditAssignmentDto auditAssignmentDto );
         System.Threading.Tasks.Task SyncChecklistAsync( ChecklistDto checklistDto );
         System.Threading.Tasks.Task TransferChecklistsToLive( List<ChecklistDto> lstChecklistDto, AuditorDto auditorDto );
+        System.Threading.Tasks.Task SendSmsCode();
+        System.Threading.Tasks.Task VerifySmsCode( string code );
     }
 }

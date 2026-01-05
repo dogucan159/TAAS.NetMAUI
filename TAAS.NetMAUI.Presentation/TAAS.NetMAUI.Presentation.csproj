@@ -51,6 +51,54 @@
 		<Configurations>Debug;Release;Release-Test;Release-Prod;Debug-Test</Configurations>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Test|net9.0-android|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);RELEASE_TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Test|net9.0-ios|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);RELEASE_TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Test|net9.0-maccatalyst|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);RELEASE_TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Test|net9.0-windows10.0.19041.0|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);RELEASE_TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Prod|net9.0-android|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);RELEASE_PROD</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Prod|net9.0-ios|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);RELEASE_PROD</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Prod|net9.0-maccatalyst|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);RELEASE_PROD</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release-Prod|net9.0-windows10.0.19041.0|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);RELEASE_PROD</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug-Test|net9.0-android|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);DEBUG_TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug-Test|net9.0-ios|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);DEBUG_TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug-Test|net9.0-maccatalyst|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);DEBUG_TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug-Test|net9.0-windows10.0.19041.0|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);DEBUG_TEST</DefineConstants>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#0F265C" />

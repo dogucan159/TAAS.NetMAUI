@@ -7,10 +7,12 @@ using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Presentation.Data;
 using TAAS.NetMAUI.Presentation.Models;
+using TAAS.NetMAUI.Presentation.Utilities.Dialog;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
     public partial class ChecklistViewModel : ObservableObject {
         private readonly IServiceManager _manager;
+        private readonly IDialogService _dialogService;
 
         [ObservableProperty]
         private ObservableCollection<ChecklistItem> checklists = new ObservableCollection<ChecklistItem>();
@@ -27,8 +29,9 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         [ObservableProperty]
         private bool isNotSystemAudit = false;
 
-        public ChecklistViewModel( IServiceManager manager ) {
+        public ChecklistViewModel( IServiceManager manager, IDialogService dialogService ) {
             _manager = manager;
+            _dialogService = dialogService;
 
             IsNotSystemAudit = NavigationContext.CurrentAuditAssignment?.TaskType.SystemAuditTypeId != NavigationContext.CurrentAuditType?.Id;
 
@@ -37,7 +40,6 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                     "Operation Audit Types" :
                     NavigationContext.CurrentAuditAssignment?.AuditAssignmentFinancialAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true ?
                     "Financial Audit Types" : "";
-            
         }
 
         public async System.Threading.Tasks.Task LoadChecklistsAsync() {
@@ -61,42 +63,99 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             if ( IsBusy )
                 return;
             else {
+
+                if ( !checklists.Any() ) {
+                    await Shell.Current.DisplayAlert( "Warning", "No checklist found to transfer", "OK" );
+                    return;
+                }
+
+                bool isConfirmed = await Shell.Current.DisplayAlert(
+                "Confirm Deletion",
+                "Are you sure you want to transfer checklists to the web service?",
+                "Yes", "No" );
+
+                if ( !isConfirmed )
+                    return;
+
+                IsBusy = true;
+
+
+#if DEBUG_TEST || RELEASE_TEST || RELEASE_PROD
+
                 try {
 
-                    bool isConfirmed = await Shell.Current.DisplayAlert(
-                        "Confirm Deletion",
-                        "Are you sure you want to transfer checklists to the web service?",
-                        "Yes", "No" );
-
-                    if ( !isConfirmed )
+                    try {
+                        await _manager.ApiService.SendSmsCode();
+                    }
+                    catch ( Exception ex ) {
+                        await _dialogService.ShowAlertAsync( "Error", $"Failed to send SMS code: {ex.Message}" );
                         return;
+                    }
+                    finally {
+                        IsBusy = false;
+                    }
+
+                    var code = await _dialogService.PromptAsync(
+                        title: "Enter Verification Code",
+                        message: "A verification code has been sent. Please enter it below:",
+                        placeholder: "e.g. 123456",
+                        accept: "Submit",
+                        cancel: "Cancel"
+                    );
+
+                    if ( string.IsNullOrWhiteSpace( code ) ) {
+                        await _dialogService.ShowAlertAsync( "Cancelled", "Verification was cancelled." );
+                        return;
+                    }
+
+                    code = code.Trim();
 
                     IsBusy = true;
-                    //CODE HERE
-                    bool isDeleteAfterTransfer = DeleteAfterTransfer;
+                    try {
+                        await _manager.ApiService.VerifySmsCode( code );
 
-                    var checklists = await _manager.ChecklistService.GetChecklistsWithDetailsByAuditAssignmentIdAndAuditTypeId( NavigationContext.CurrentAuditAssignment.Id,
-                        NavigationContext.CurrentAuditType.Id, true );
-
-                    if ( checklists.Any() ) {
-                        var auditorDto = await _manager.AuditorService.GetByMachineName( false );
-                        await _manager.ApiService.TransferChecklistsToLive( checklists, auditorDto );
+                        await Transfer();
                         await Shell.Current.DisplayAlert( "Success", "Unsynced files transferred to live!", "OK" );
-
                         await LoadChecklistsAsync();
-                    }
-                    else
-                        await Shell.Current.DisplayAlert( "Warning", "No checklist found to transfer", "OK" );
 
-                    //
-                }
-                catch ( Exception ex ) {
-                    Debug.WriteLine( $"[TransferToLive] ERROR: {ex.Message}" );
-                    await Shell.Current.DisplayAlert( "Error", "An error occurred during transfer.", "OK" );
+                    }
+                    catch ( Exception ex ) {
+                        await _dialogService.ShowAlertAsync( "Error", $"Failed to verify SMS code or pull data: {ex.Message}" );
+                    }
                 }
                 finally {
                     IsBusy = false;
                 }
+
+#else
+                try {
+                    await Transfer();
+                    await Shell.Current.DisplayAlert( "Success", "Unsynced files transferred to live!", "OK" );
+                    await LoadChecklistsAsync();
+                }
+                catch ( Exception ex ) {
+                    Debug.WriteLine( $"[TransferToLiveAsync] ERROR: {ex.Message}" );
+                    await Shell.Current.DisplayAlert( "Error", "Failed to pull data.", "OK" );
+                }
+                finally {
+                    IsBusy = false;
+                }
+#endif
+            }
+        }
+
+        private async System.Threading.Tasks.Task Transfer() {
+            try {
+                //CODE HERE
+                //bool isDeleteAfterTransfer = DeleteAfterTransfer;
+
+                var checklists = await _manager.ChecklistService.GetChecklistsWithDetailsByAuditAssignmentIdAndAuditTypeId( NavigationContext.CurrentAuditAssignment.Id,
+                    NavigationContext.CurrentAuditType.Id, true );
+                var auditorDto = await _manager.AuditorService.GetByMachineName( false );
+                await _manager.ApiService.TransferChecklistsToLive( checklists, auditorDto );
+            }
+            catch ( Exception ex ) {
+                throw new Exception( ex.Message );
             }
         }
 
@@ -109,9 +168,9 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
 
             if ( NavigationContext.CurrentAuditAssignment?.AuditAssignmentOperationAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true )
                 await Shell.Current.GoToAsync( nameof( OperationAuditPage ) );
-            else if ( NavigationContext.CurrentAuditAssignment?.AuditAssignmentFinancialAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true ) 
+            else if ( NavigationContext.CurrentAuditAssignment?.AuditAssignmentFinancialAuditTypes?.Any( at => at.AuditTypeId == NavigationContext.CurrentAuditType?.Id ) == true )
                 await Shell.Current.GoToAsync( nameof( FinancialAuditPage ) );
-            
+
 
         }
 

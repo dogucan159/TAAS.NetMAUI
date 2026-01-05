@@ -6,12 +6,14 @@ using System.Windows.Input;
 using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Presentation.Data;
 using TAAS.NetMAUI.Presentation.Models;
+using TAAS.NetMAUI.Presentation.Utilities.Dialog;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
 
     public partial class ChecklistSelectionViewModel : ObservableObject {
 
         private readonly IServiceManager _manager;
+        private readonly IDialogService _dialogService;
 
         [ObservableProperty]
         private ObservableCollection<ChecklistItem> checklists = new ObservableCollection<ChecklistItem>();
@@ -20,8 +22,9 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         private bool isBusy = false;
         public bool HasSelected => Checklists != null && Checklists.Any( c => c.IsSelected );
 
-        public ChecklistSelectionViewModel( IServiceManager manager ) {
+        public ChecklistSelectionViewModel( IServiceManager manager, IDialogService dialogService ) {
             _manager = manager;
+            _dialogService = dialogService;
         }
 
         public ICommand ToggleChecklistSelectionCommand => new Command<ChecklistItem>( item => {
@@ -35,9 +38,71 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             if ( this.IsBusy )
                 return;
 
-            try {
-                IsBusy = true;
 
+            IsBusy = true;
+
+#if DEBUG_TEST || RELEASE_TEST || RELEASE_PROD
+
+            try {
+
+                try {
+                    await _manager.ApiService.SendSmsCode();
+                }
+                catch ( Exception ex ) {
+                    await _dialogService.ShowAlertAsync( "Error", $"Failed to send SMS code: {ex.Message}" );
+                    return;
+                }
+                finally {
+                    IsBusy = false;
+                }
+
+                var code = await _dialogService.PromptAsync(
+                    title: "Enter Verification Code",
+                    message: "A verification code has been sent. Please enter it below:",
+                    placeholder: "e.g. 123456",
+                    accept: "Submit",
+                    cancel: "Cancel"
+                );
+
+                if ( string.IsNullOrWhiteSpace( code ) ) {
+                    await _dialogService.ShowAlertAsync( "Cancelled", "Verification was cancelled." );
+                    return;
+                }
+
+                code = code.Trim();
+
+                IsBusy = true;
+                try {
+                    await _manager.ApiService.VerifySmsCode( code );
+                    await Pull();
+                    await _dialogService.ShowAlertAsync( "Success", "Data pulled successfully!" );
+                }
+                catch ( Exception ex ) {
+                    await _dialogService.ShowAlertAsync( "Error", $"Failed to verify SMS code or pull data: {ex.Message}" );
+                }
+            }
+            finally {
+                IsBusy = false;
+            }
+
+#else
+            try {
+                await Pull();
+                await Shell.Current.DisplayAlert( "Success", "Data pulled successfully!", "OK" );
+            }
+            catch ( Exception ex ) {
+                Debug.WriteLine( $"[GetChecklistsAsync] ERROR: {ex.Message}" );
+                await Shell.Current.DisplayAlert( "Error", "Failed to pull data.", "OK" );
+            }
+            finally {
+                IsBusy = false;
+            }
+#endif
+
+        }
+
+        private async System.Threading.Tasks.Task Pull() {
+            try {
                 var apiChecklists = await _manager.ApiService.PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( NavigationContext.CurrentAuditAssignment.Id, NavigationContext.CurrentAuditType.Id );
 
                 if ( apiChecklists != null && apiChecklists.Count > 0 ) {
@@ -49,13 +114,9 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 }
             }
             catch ( Exception ex ) {
-                Debug.WriteLine( $"[GetChecklistsAsync] ERROR: {ex.Message}" );
-                await Shell.Current.DisplayAlert( "Error", "Failed to pull data.", "OK" );
-            }
-            finally {
-                IsBusy = false;
-            }
 
+                throw new Exception( ex.Message );
+            }
         }
 
         [RelayCommand]

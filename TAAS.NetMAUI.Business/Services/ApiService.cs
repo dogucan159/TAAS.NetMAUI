@@ -58,9 +58,9 @@ namespace TAAS.NetMAUI.Business.Services {
             string secretVal = "";
             string endpointVal = "";
 #if DEBUG_TEST || RELEASE_TEST
-                clientVal = "taas-client";
-                secretVal = "?d52X6/uUuZ?P%2bwG";
-                endpointVal = "https://test-giris.hmb.gov.tr/oauth2.0/accessToken";
+            clientVal = "taas-client";
+            secretVal = "?d52X6/uUuZ?P%2bwG";
+            endpointVal = "https://test-giris.hmb.gov.tr/oauth2.0/accessToken";
 
 #elif RELEASE_PROD
                 clientVal = "";
@@ -169,6 +169,48 @@ namespace TAAS.NetMAUI.Business.Services {
             }
 
             return result;
+        }
+
+        public async System.Threading.Tasks.Task SendSmsCode() {
+            try {
+
+                HttpClient client = new() {
+                    BaseAddress = new Uri( _endpointSettings.RootAddress )
+                };
+                string token = await GetToken();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
+                try {
+                    var response = await client.PostAsync( $"taas-offline/notification/send-sms-code?userName={Environment.UserName}", null );
+                    response.EnsureSuccessStatusCode();
+                }
+                catch ( HttpRequestException ex ) {
+                    throw new Exception( ex.Message );
+                }
+            }
+            catch ( Exception ex ) {
+                throw new Exception( ex.Message );
+            }
+        }
+
+        public async System.Threading.Tasks.Task VerifySmsCode( string code ) {
+            try {
+
+                HttpClient client = new() {
+                    BaseAddress = new Uri( _endpointSettings.RootAddress )
+                };
+                string token = await GetToken();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "Bearer", token );
+                try {
+                    var response = await client.PostAsync( $"taas-offline/notification/verify-sms-code?smsCode={code}&userName={Environment.UserName}", null );
+                    response.EnsureSuccessStatusCode();
+                }
+                catch ( HttpRequestException ex ) {
+                    throw new Exception( ex.Message );
+                }
+            }
+            catch ( Exception ex ) {
+                throw new Exception( ex.Message );
+            }
         }
 
         public async Task<ChecklistDto?> PullChecklistFromAPI( long id ) {

@@ -379,6 +379,17 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         [RelayCommand]
         private async Task FinalizeChecklistAsync() {
             try {
+
+                var checklistDetails = await _manager.ChecklistDetailService.GetByChecklistId( Checklist.Id, false );
+
+                bool hasMatch = checklistDetails?.Any( c => c.ChecklistTemplateDetail.Title != true && string.IsNullOrEmpty( c.Answer ) ) ?? false;
+
+                if ( hasMatch ) {
+                    await Shell.Current.DisplayAlert( "Warning", "All questions must be answered before finalizing the checklist.", "OK" );
+                    return;
+                }
+
+
                 bool isConfirmed = await Shell.Current.DisplayAlert(
                     "Confirm Finalization",
                     "Are you sure you want to finalize the checklist?",

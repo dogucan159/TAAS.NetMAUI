@@ -13,11 +13,13 @@ using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Core;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Core.Entities;
+using TAAS.NetMAUI.Presentation.Utilities.Dialog;
 
 namespace TAAS.NetMAUI.Presentation.ViewModels {
     public partial class AuditAssignmentSelectionViewModel : ObservableObject {
 
         private readonly IServiceManager _manager;
+        private readonly IDialogService _dialogService;
         [ObservableProperty]
         private string mainTaskEntry = "";
         [ObservableProperty]
@@ -32,8 +34,9 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         private AuditAssignmentDto selectedAuditAssignment;
         public bool HasSelected => SelectedAuditAssignment != null;
 
-        public AuditAssignmentSelectionViewModel( IServiceManager manager ) {
+        public AuditAssignmentSelectionViewModel( IServiceManager manager, IDialogService dialogService ) {
             _manager = manager;
+            _dialogService = dialogService;
         }
 
         [RelayCommand]
@@ -46,18 +49,55 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 return;
             }
 
-            try {
-                IsBusy = true;
-                AuditAssignments.Clear();
+            IsBusy = true;
 
-                List<AuditAssignmentDto>? apiAuditAssignments = await _manager.ApiService.PullAuditAssignments( MainTaskEntry, TaskTypeEntry, TaskEntry );
-                if ( apiAuditAssignments != null && apiAuditAssignments.Count > 0 ) {
-                    var dbAuditAssignments = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
-                    if ( dbAuditAssignments != null && dbAuditAssignments.Count > 0 )
-                        AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments.Where( a => !dbAuditAssignments.Any( d => d.Id == a.Id ) ) );
-                    else
-                        AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments );
+#if DEBUG_TEST || RELEASE_TEST || RELEASE_PROD
+
+            try {
+
+                try {
+                    await _manager.ApiService.SendSmsCode();
                 }
+                catch ( Exception ex ) {
+                    await _dialogService.ShowAlertAsync( "Error", $"Failed to send SMS code: {ex.Message}" );
+                    return; 
+                }
+                finally {
+                    IsBusy = false;
+                }
+
+                var code = await _dialogService.PromptAsync(
+                    title: "Enter Verification Code",
+                    message: "A verification code has been sent. Please enter it below:",
+                    placeholder: "e.g. 123456",
+                    accept: "Submit",
+                    cancel: "Cancel"
+                );
+
+                if ( string.IsNullOrWhiteSpace( code ) ) {
+                    await _dialogService.ShowAlertAsync( "Cancelled", "Verification was cancelled." );
+                    return;
+                }
+
+                code = code.Trim();
+
+                IsBusy = true;
+                try {
+                    await _manager.ApiService.VerifySmsCode( code );
+                    await Pull();
+                    await _dialogService.ShowAlertAsync( "Success", "Data pulled successfully!" );
+                }
+                catch ( Exception ex ) {
+                    await _dialogService.ShowAlertAsync( "Error", $"Failed to verify SMS code or pull data: {ex.Message}" );
+                }
+            }
+            finally {
+                IsBusy = false;
+            }
+
+#else
+            try {
+                await Pull();
                 await Shell.Current.DisplayAlert( "Success", "Data pulled successfully!", "OK" );
             }
             catch ( Exception ex ) {
@@ -66,6 +106,24 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             }
             finally {
                 IsBusy = false;
+            }
+#endif
+
+        }
+
+        private async System.Threading.Tasks.Task Pull() {
+            try {
+                List<AuditAssignmentDto>? apiAuditAssignments = await _manager.ApiService.PullAuditAssignments( MainTaskEntry, TaskTypeEntry, TaskEntry );
+                if ( apiAuditAssignments != null && apiAuditAssignments.Count > 0 ) {
+                    var dbAuditAssignments = await _manager.AuditAssignmentService.GetAllAuditAssignments( false );
+                    if ( dbAuditAssignments != null && dbAuditAssignments.Count > 0 )
+                        AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments.Where( a => !dbAuditAssignments.Any( d => d.Id == a.Id ) ) );
+                    else
+                        AuditAssignments = new ObservableCollection<AuditAssignmentDto>( apiAuditAssignments );
+                }
+            }
+            catch ( Exception ex ) {
+                throw new Exception( ex.Message );
             }
         }
 

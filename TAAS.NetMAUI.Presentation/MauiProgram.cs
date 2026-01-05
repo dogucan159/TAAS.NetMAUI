@@ -7,6 +7,7 @@ using TAAS.NetMAUI.Infrastructure;
 using TAAS.NetMAUI.Infrastructure.Data;
 using TAAS.NetMAUI.Infrastructure.Interfaces;
 using TAAS.NetMAUI.Infrastructure.Repositories;
+using TAAS.NetMAUI.Presentation.Utilities.Dialog;
 using TAAS.NetMAUI.Presentation.ViewModels;
 
 namespace TAAS.NetMAUI.Presentation {
@@ -69,6 +70,7 @@ namespace TAAS.NetMAUI.Presentation {
             builder.Services.AddScoped<IChecklistDetailService, ChecklistDetailService>();
             builder.Services.AddScoped<IChecklistTaasFileService, ChecklistTaasFileService>();
             builder.Services.AddScoped<IChecklistDetailTaasFileService, ChecklistDetailTaasFileService>();
+            builder.Services.AddSingleton<IDialogService, DialogService>();
 
 
             builder.Services.AddScoped<LoginViewModel>();
