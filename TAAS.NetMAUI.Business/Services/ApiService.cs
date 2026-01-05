@@ -512,7 +512,7 @@ namespace TAAS.NetMAUI.Business.Services {
                         else {
                             //taas-file/getWithFileData
                             try {
-                                var response = await client.GetAsync( $"{_endpointSettings.ControllerName}taas-file/get-with-file-data/{taasFileDto.Id}" );
+                                var response = await client.GetAsync( $"{_endpointSettings.ControllerName}taas-file/getWithFileData?id={taasFileDto.Id}" );
                                 response.EnsureSuccessStatusCode();
                                 var taasFileJsonString = await response.Content.ReadAsStringAsync();
                                 TaasFileDto? taasFileResult = JsonConvert.DeserializeObject<TaasFileDto>( taasFileJsonString );
@@ -522,7 +522,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                 newChecklistTaasFile.TaasFile.Synched = true;
                             }
                             catch ( HttpRequestException ex ) {
-                                //throw new Exception( ex.Message );
+                                throw new Exception( ex.Message );
                             }
                         }
 

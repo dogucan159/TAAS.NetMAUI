@@ -35,58 +35,15 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
 
         [RelayCommand]
         public async System.Threading.Tasks.Task GetChecklistsAsync() {
-            if ( this.IsBusy )
-                return;
-
-
-            IsBusy = true;
-
-#if DEBUG_TEST || RELEASE_TEST || RELEASE_PROD
 
             try {
 
-                try {
-                    await _manager.ApiService.SendSmsCode();
-                }
-                catch ( Exception ex ) {
-                    await _dialogService.ShowAlertAsync( "Error", $"Failed to send SMS code: {ex.Message}" );
+                if ( this.IsBusy )
                     return;
-                }
-                finally {
-                    IsBusy = false;
-                }
 
-                var code = await _dialogService.PromptAsync(
-                    title: "Enter Verification Code",
-                    message: "A verification code has been sent. Please enter it below:",
-                    placeholder: "e.g. 123456",
-                    accept: "Submit",
-                    cancel: "Cancel"
-                );
-
-                if ( string.IsNullOrWhiteSpace( code ) ) {
-                    await _dialogService.ShowAlertAsync( "Cancelled", "Verification was cancelled." );
-                    return;
-                }
-
-                code = code.Trim();
 
                 IsBusy = true;
-                try {
-                    await _manager.ApiService.VerifySmsCode( code );
-                    await Pull();
-                    await _dialogService.ShowAlertAsync( "Success", "Data pulled successfully!" );
-                }
-                catch ( Exception ex ) {
-                    await _dialogService.ShowAlertAsync( "Error", $"Failed to verify SMS code or pull data: {ex.Message}" );
-                }
-            }
-            finally {
-                IsBusy = false;
-            }
 
-#else
-            try {
                 await Pull();
                 await Shell.Current.DisplayAlert( "Success", "Data pulled successfully!", "OK" );
             }
@@ -97,7 +54,64 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             finally {
                 IsBusy = false;
             }
-#endif
+
+            //#if DEBUG_TEST || RELEASE_TEST || RELEASE_PROD
+
+            //            try {
+
+            //                try {
+            //                    await _manager.ApiService.SendSmsCode();
+            //                }
+            //                catch ( Exception ex ) {
+            //                    await _dialogService.ShowAlertAsync( "Error", $"Failed to send SMS code: {ex.Message}" );
+            //                    return;
+            //                }
+            //                finally {
+            //                    IsBusy = false;
+            //                }
+
+            //                var code = await _dialogService.PromptAsync(
+            //                    title: "Enter Verification Code",
+            //                    message: "A verification code has been sent. Please enter it below:",
+            //                    placeholder: "e.g. 123456",
+            //                    accept: "Submit",
+            //                    cancel: "Cancel"
+            //                );
+
+            //                if ( string.IsNullOrWhiteSpace( code ) ) {
+            //                    await _dialogService.ShowAlertAsync( "Cancelled", "Verification was cancelled." );
+            //                    return;
+            //                }
+
+            //                code = code.Trim();
+
+            //                IsBusy = true;
+            //                try {
+            //                    await _manager.ApiService.VerifySmsCode( code );
+            //                    await Pull();
+            //                    await _dialogService.ShowAlertAsync( "Success", "Data pulled successfully!" );
+            //                }
+            //                catch ( Exception ex ) {
+            //                    await _dialogService.ShowAlertAsync( "Error", $"Failed to verify SMS code or pull data: {ex.Message}" );
+            //                }
+            //            }
+            //            finally {
+            //                IsBusy = false;
+            //            }
+
+            //#else
+            //            try {
+            //                await Pull();
+            //                await Shell.Current.DisplayAlert( "Success", "Data pulled successfully!", "OK" );
+            //            }
+            //            catch ( Exception ex ) {
+            //                Debug.WriteLine( $"[GetChecklistsAsync] ERROR: {ex.Message}" );
+            //                await Shell.Current.DisplayAlert( "Error", "Failed to pull data.", "OK" );
+            //            }
+            //            finally {
+            //                IsBusy = false;
+            //            }
+            //#endif
 
         }
 
