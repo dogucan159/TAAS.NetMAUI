@@ -6,6 +6,7 @@
     <script>
         tinymce.init({
             selector: '#editor',
+            /*entity_encoding: 'raw',*/
             height: 400,
             menubar: false,
             resize: false,
@@ -14,7 +15,7 @@
             license_key: 'gpl',
             setup: function (editor) {
                 window.getContent = function () {
-                    return editor.getContent();
+                    return editor.getContent({ format: 'raw' });
                 };
                 window.setContent = function (html) {
                     editor.setContent(html);

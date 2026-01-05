@@ -2,6 +2,8 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Core.Entities;
@@ -92,7 +94,10 @@ public partial class QuestionDetailPage : ContentPage {
 
     private async Task<string> GetEditorContentAsync() {
         var result = await EditorWebView.EvaluateJavaScriptAsync( "window.getContent();" );
-        return result?.ToString();
+
+        var normalizedResult = Regex.Unescape( result );
+
+        return normalizedResult;
     }
 
     private async void OnSaveClicked( object sender, EventArgs e ) {
