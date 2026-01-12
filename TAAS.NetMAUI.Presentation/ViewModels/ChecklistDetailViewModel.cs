@@ -159,7 +159,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 await stream.CopyToAsync( ms );
                 var bytes = ms.ToArray();
 
-                var auditorDto = _manager.AuditorService.GetByMachineName( false ).Result;
+                var auditorDto = await _manager.AuditorService.GetByMachineName( false );
 
                 var sessionUser = await _manager.AuditorService.GetById( auditorDto.Id, false );
 
@@ -256,8 +256,16 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         [RelayCommand]
         private async System.Threading.Tasks.Task UploadFileAsync() {
             try {
+
+                var customFileType = new FilePickerFileType(
+                                new Dictionary<DevicePlatform, IEnumerable<string>>
+                                {
+                                    { DevicePlatform.WinUI, new[] { ".xml", ".xlsx", ".pdf", ".doc", ".docx", ".pptx", ".bmp", ".jpeg" } }
+                                } );
+
                 var result = await FilePicker.PickAsync( new PickOptions {
-                    PickerTitle = "Select a file"
+                    PickerTitle = "Select a file",
+                    FileTypes = customFileType
                 } );
 
                 if ( result != null )

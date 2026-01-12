@@ -11,7 +11,6 @@ namespace TAAS.NetMAUI.Business.Interfaces {
         Task<List<AuditAssignmentDto>?> PullAuditAssignments( string mainTask, string taskType, string task );
         Task<List<ChecklistDto>?> PullChecklistsByAuditAssignmentIdAndAuditTypeIdFromAPI( long auditAssignmentId, long auditTypeId );
         Task<ChecklistDto?> PullChecklistFromAPI( long id );
-        Task<AuditorDto?> PullAndSyncAuditorFromAPI();
         System.Threading.Tasks.Task SyncAuditAssignmentAsync( AuditAssignmentDto auditAssignmentDto );
         System.Threading.Tasks.Task SyncChecklistAsync( ChecklistDto checklistDto );
         System.Threading.Tasks.Task TransferChecklistsToLive( List<ChecklistDto> lstChecklistDto, AuditorDto auditorDto );
