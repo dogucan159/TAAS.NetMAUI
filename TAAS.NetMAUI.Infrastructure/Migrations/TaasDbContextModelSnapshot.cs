@@ -224,11 +224,6 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar");
 
-                    b.Property<string>("IdentificationNumber")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(255)

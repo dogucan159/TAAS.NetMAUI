@@ -13,10 +13,10 @@ namespace TAAS.NetMAUI.Infrastructure {
     public class AuditorConfiguration : IEntityTypeConfiguration<Auditor> {
         public void Configure( EntityTypeBuilder<Auditor> builder ) {
 
-            builder.Property( x => x.IdentificationNumber )
-                .HasColumnType( "varchar" )
-                .HasMaxLength( 255 )
-                .IsRequired( true );
+            //builder.Property( x => x.IdentificationNumber )
+            //    .HasColumnType( "varchar" )
+            //    .HasMaxLength( 255 )
+            //    .IsRequired( true );
 
             builder.Property( x => x.FirstName )
                 .HasColumnType( "varchar" )

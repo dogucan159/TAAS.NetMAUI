@@ -14,6 +14,7 @@ using TAAS.NetMAUI.Core.DTOs;
 using TAAS.NetMAUI.Core.Entities;
 using TAAS.NetMAUI.Presentation.Data;
 using TAAS.NetMAUI.Presentation.Models;
+using TAAS.NetMAUI.Presentation.Utilities.ExcelUpload;
 using TAAS.NetMAUI.Shared;
 using Task = System.Threading.Tasks.Task;
 
@@ -154,10 +155,35 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
         private async Task SaveFileAndLoad( FileResult result ) {
             try {
 
+                byte[] bytes = [];
                 using var stream = await result.OpenReadAsync();
-                using var ms = new MemoryStream();
-                await stream.CopyToAsync( ms );
-                var bytes = ms.ToArray();
+
+                if ( IsExcel( result ) ) {
+
+                    var validationOptions = new ExcelValidationOptions() {
+                        StopOnFirstCritical = true,
+                        AddFormulaToViolation = true,
+                        AddFormulaLikeTextToViolation = true
+                    };
+                    var validation = await ExcelUploadValidator.ValidateAsync( stream, validationOptions );
+                    if ( !validation.IsValid )
+                        throw new Exception( "The uploaded Excel file contains disallowed content and cannot be accepted." );
+                    else
+                        bytes = validation.Bytes;
+
+                    /*var neutralizeOptions = new ExcelNeutralizeOptions {
+                        SkipHiddenSheets = false,           // scan hidden too
+                        NeutralizeDdeText = true,
+                        NeutralizeFormulaLikeText = true,
+                    };
+                    var excelNeutralizeResult = await ExcelFormulaEscaper.EscapeFormulasInPlaceAsync( stream, neutralizeOptions );*/
+
+                }
+                else {
+                    using var ms = new MemoryStream();
+                    await stream.CopyToAsync( ms );
+                    bytes = ms.ToArray();
+                }
 
                 var auditorDto = await _manager.AuditorService.GetByMachineName( false );
 
@@ -260,7 +286,29 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 var customFileType = new FilePickerFileType(
                                 new Dictionary<DevicePlatform, IEnumerable<string>>
                                 {
-                                    { DevicePlatform.WinUI, new[] { ".xml", ".xlsx", ".pdf", ".doc", ".docx", ".pptx", ".bmp", ".jpeg" } }
+                                    { DevicePlatform.WinUI, new[] { ".xlsx",
+                                        ".xls",
+                                        ".csv",
+                                        ".txt",
+                                        ".pdf",
+                                        ".docx",
+                                        ".doc",
+                                        ".png",
+                                        ".jpg",
+                                        ".jpeg",
+                                        //".heic",
+                                        ".png",
+                                        ".tiff",
+                                        ".zip",
+                                        //".msg",
+                                        //".mp4",
+                                        //".avi",
+                                        //".mov",
+                                        //".mkv",
+                                        ".ppt",
+                                        ".pptx",
+                                        //".bmp"
+                                        } }
                                 } );
 
                 var result = await FilePicker.PickAsync( new PickOptions {
@@ -271,12 +319,23 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 if ( result != null )
                     await SaveFileAndLoad( result );
 
+
             }
             catch ( Exception ex ) {
                 Debug.WriteLine( $"[UploadFileAsync] {ex.Message}" );
-                await Shell.Current.DisplayAlert( "Error", "File could not be uploaded.", "OK" );
+                await Shell.Current.DisplayAlert( "Error", $"File could not be uploaded. Reason: {ex.Message}", "OK" );
             }
         }
+
+
+        private bool IsExcel( FileResult file ) {
+            var ext = Path.GetExtension( file.FileName )?.ToLowerInvariant();
+            if ( ext == ".xlsx" || ext == ".xls" || ext == ".csv" ) return true;
+
+            var mime = file.ContentType?.ToLowerInvariant() ?? "";
+            return mime.Contains( "spreadsheet" ) || mime.Contains( "excel" );
+        }
+
 
         [RelayCommand]
         private async Task DeleteFileAsync( UploadedFileItem uploadedFile ) {

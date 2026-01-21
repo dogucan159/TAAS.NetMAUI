@@ -26,10 +26,10 @@ namespace TAAS.NetMAUI.Business.Services {
             return _mapper.Map<AuditorDto>( auditor );
         }
 
-        public async Task<AuditorDto> GetByIdentificationNumber( string identificationNumber, bool trackChanges ) {
-            var auditor = await _manager.Auditor.GetOneAuditorByIdentificationNumber( identificationNumber, trackChanges );
-            return _mapper.Map<AuditorDto>( auditor );
-        }
+        //public async Task<AuditorDto> GetByIdentificationNumber( string identificationNumber, bool trackChanges ) {
+        //    var auditor = await _manager.Auditor.GetOneAuditorByIdentificationNumber( identificationNumber, trackChanges );
+        //    return _mapper.Map<AuditorDto>( auditor );
+        //}
 
         public async Task<AuditorDto> GetByMachineName( bool trackChanges ) {
             var auditor = await _manager.Auditor.GetOneAuditorByMachineName( trackChanges );

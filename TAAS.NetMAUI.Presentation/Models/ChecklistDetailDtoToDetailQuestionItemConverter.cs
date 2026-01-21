@@ -11,13 +11,22 @@ namespace TAAS.NetMAUI.Presentation.Models {
             List<DetailQuestionItem> lst = new List<DetailQuestionItem>();
 
             foreach ( var dto in dtos ) {
+
+
+                var fileNames = dto.ChecklistDetailTaasFiles?
+                    .Where( f => f.Deleted is not true )
+                    .Select( f => f.TaasFile?.Name )
+                    .Where( n => !string.IsNullOrWhiteSpace( n ) )
+                    .ToList();
+
+
                 lst.Add( new DetailQuestionItem() {
                     Id = dto.Id,
                     Comment = dto.ChecklistTemplateDetail.Comment,
                     CommentTr = dto.ChecklistTemplateDetail.CommentTr,
                     Answer = dto.Answer,
                     Explanation = dto.Explanation,
-                    FileNames = dto.ChecklistDetailTaasFiles?.Any() == true ? string.Join( ", ", dto.ChecklistDetailTaasFiles.Select( f => f.TaasFile.Name ) ) : "No files attached...",
+                    FileNames = ( fileNames is { Count: > 0 } ) ? string.Join( ", ", fileNames ) : "No files attached...",
                     HasExplanationFormatted = !string.IsNullOrEmpty( dto.ExplanationFormatted )
                 } );
             }

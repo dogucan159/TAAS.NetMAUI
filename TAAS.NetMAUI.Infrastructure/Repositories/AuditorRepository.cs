@@ -22,9 +22,9 @@ namespace TAAS.NetMAUI.Infrastructure.Repositories {
             await FindByCondition( b => b.Id == id, trackChanges )
             .SingleOrDefaultAsync();
 
-        public async Task<Auditor?> GetOneAuditorByIdentificationNumber( string identificationNumber, bool trackChanges ) =>
-            await FindByCondition( b => b.IdentificationNumber == identificationNumber, trackChanges )
-            .SingleOrDefaultAsync();
+        //public async Task<Auditor?> GetOneAuditorByIdentificationNumber( string identificationNumber, bool trackChanges ) =>
+        //    await FindByCondition( b => b.IdentificationNumber == identificationNumber, trackChanges )
+        //    .SingleOrDefaultAsync();
 
         public async Task<Auditor?> GetOneAuditorByMachineName( bool trackChanges ) =>
             await FindByCondition( b => b.MachineName == System.Environment.UserName, trackChanges )

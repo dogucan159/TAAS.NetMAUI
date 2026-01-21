@@ -19,7 +19,6 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     FirstName = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
                     LastName = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
-                    IdentificationNumber = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
                     MachineName = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>

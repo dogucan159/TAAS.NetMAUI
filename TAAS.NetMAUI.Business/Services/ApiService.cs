@@ -255,7 +255,7 @@ namespace TAAS.NetMAUI.Business.Services {
                 auditAssignment.CoordinatorAuditor = dbCoordinatorAuditor;
             else {
                 var auditor = _mapper.Map<Auditor>( auditAssignmentDto.CoordinatorAuditor );
-                auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
+                //auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
                 auditAssignment.CoordinatorAuditor = auditor;
             }
 
@@ -328,7 +328,7 @@ namespace TAAS.NetMAUI.Business.Services {
                             newAuditAssignmentAuditor.Auditor = dbAuditor;
                         else {
                             var auditor = _mapper.Map<Auditor>( auditAssignmentAuditor.Auditor );
-                            auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
+                            //auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
                             newAuditAssignmentAuditor.Auditor = auditor;
                         }
                         auditAssignment.AuditAssignmentAuditors.Add( newAuditAssignmentAuditor );
@@ -348,7 +348,7 @@ namespace TAAS.NetMAUI.Business.Services {
                             newAuditAssignmentTemporaryAuditor.Auditor = dbAuditor;
                         else {
                             var auditor = _mapper.Map<Auditor>( auditAssignmentTemporaryAuditor.Auditor );
-                            auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
+                            //auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
                             newAuditAssignmentTemporaryAuditor.Auditor = auditor;
                         }
                         auditAssignment.AuditAssignmentTemporaryAuditors.Add( newAuditAssignmentTemporaryAuditor );
@@ -457,7 +457,7 @@ namespace TAAS.NetMAUI.Business.Services {
                         checklist.ReviewedAuditor = dbReviewedAuditor;
                     else {
                         var auditor = _mapper.Map<Auditor>( checklistDto.ReviewedAuditor );
-                        auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
+                        //auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
                         checklist.ReviewedAuditor = auditor;
                     }
                 } //end reviewed auditor
@@ -508,7 +508,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                 newChecklistAuditor.Auditor = dbAuditor;
                             else {
                                 var auditor = _mapper.Map<Auditor>( checklistAuditor.Auditor );
-                                auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
+                                //auditor.IdentificationNumber = PasswordHelper.Hash( auditor.IdentificationNumber );
                                 newChecklistAuditor.Auditor = auditor;
                             }
                             //ChecklistAuditor newChecklistAuditor = _mapper.Map<ChecklistAuditor>( checklistAuditor );

@@ -115,7 +115,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                         await _manager.ApiService.VerifySmsCode( code );
 
                         await Transfer();
-                        await Shell.Current.DisplayAlert( "Success", "Unsynced files transferred to live!", "OK" );
+                        await Shell.Current.DisplayAlert( "Success", "Checklists transferred to live!", "OK" );
                         await LoadChecklistsAsync();
 
                     }

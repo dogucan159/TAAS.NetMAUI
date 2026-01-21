@@ -11,7 +11,7 @@ using TAAS.NetMAUI.Infrastructure.Data;
 namespace TAAS.NetMAUI.Infrastructure.Migrations
 {
     [DbContext(typeof(TaasDbContext))]
-    [Migration("20251218203709_InitialCreate")]
+    [Migration("20260119111815_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -223,11 +223,6 @@ namespace TAAS.NetMAUI.Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar");
-
-                    b.Property<string>("IdentificationNumber")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar");
