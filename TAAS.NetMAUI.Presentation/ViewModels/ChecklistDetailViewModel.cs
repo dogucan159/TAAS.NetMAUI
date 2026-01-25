@@ -1,20 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 using TAAS.NetMAUI.Business.Interfaces;
-using TAAS.NetMAUI.Business.Services;
 using TAAS.NetMAUI.Core.DTOs;
-using TAAS.NetMAUI.Core.Entities;
 using TAAS.NetMAUI.Presentation.Data;
 using TAAS.NetMAUI.Presentation.Models;
-using TAAS.NetMAUI.Presentation.Utilities.ExcelUpload;
 using TAAS.NetMAUI.Shared;
 using Task = System.Threading.Tasks.Task;
 
@@ -158,7 +149,7 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 byte[] bytes = [];
                 using var stream = await result.OpenReadAsync();
 
-                if ( IsExcel( result ) ) {
+                /*TODO: Remove BTGM formul iceren excel dosyalarinin upload edilmesine izin verdi. if ( IsExcel( result ) ) {
 
                     var validationOptions = new ExcelValidationOptions() {
                         StopOnFirstCritical = true,
@@ -171,19 +162,15 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                     else
                         bytes = validation.Bytes;
 
-                    /*var neutralizeOptions = new ExcelNeutralizeOptions {
-                        SkipHiddenSheets = false,           // scan hidden too
-                        NeutralizeDdeText = true,
-                        NeutralizeFormulaLikeText = true,
-                    };
-                    var excelNeutralizeResult = await ExcelFormulaEscaper.EscapeFormulasInPlaceAsync( stream, neutralizeOptions );*/
-
                 }
                 else {
                     using var ms = new MemoryStream();
                     await stream.CopyToAsync( ms );
                     bytes = ms.ToArray();
-                }
+                }*/
+                using var ms = new MemoryStream();
+                await stream.CopyToAsync( ms );
+                bytes = ms.ToArray();
 
                 var auditorDto = await _manager.AuditorService.GetByMachineName( false );
 
@@ -286,28 +273,21 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                 var customFileType = new FilePickerFileType(
                                 new Dictionary<DevicePlatform, IEnumerable<string>>
                                 {
-                                    { DevicePlatform.WinUI, new[] { ".xlsx",
-                                        ".xls",
-                                        ".csv",
-                                        ".txt",
-                                        ".pdf",
-                                        ".docx",
-                                        ".doc",
-                                        ".png",
-                                        ".jpg",
-                                        ".jpeg",
-                                        //".heic",
-                                        ".png",
-                                        ".tiff",
-                                        ".zip",
-                                        //".msg",
-                                        //".mp4",
-                                        //".avi",
-                                        //".mov",
-                                        //".mkv",
-                                        ".ppt",
-                                        ".pptx",
-                                        //".bmp"
+                                    { DevicePlatform.WinUI, new[] { ".csv",
+                                    ".doc",
+                                    ".docx",
+                                    ".jpeg",
+                                    ".jpg",
+                                    ".pdf",
+                                    ".png",
+                                    ".ppt",
+                                    ".pptx",
+                                    ".tiff",
+                                    ".txt",
+                                    ".xls",
+                                    ".xlsx",
+                                    ".xml",
+                                    ".zip"
                                         } }
                                 } );
 
@@ -316,8 +296,17 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                     FileTypes = customFileType
                 } );
 
-                if ( result != null )
+                if ( result != null ) {
+
+                    /*if ( !await ValidateMimeTypeAsync( result ) ) {
+                        await Shell.Current.DisplayAlert( "Invalid File", "The selected file's content does not match its file type. Please select a valid file.", "OK" );
+                        return;
+                    }
+                    else
+                        await SaveFileAndLoad( result );*/
+
                     await SaveFileAndLoad( result );
+                }
 
 
             }
@@ -327,14 +316,244 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
             }
         }
 
+        private async Task<bool> ValidateMimeTypeAsync( FileResult file ) {
+            try {
+                using var stream = await file.OpenReadAsync();
 
-        private bool IsExcel( FileResult file ) {
+                string actualMimeType = await GetMimeTypeFromFileSignatureAsync( stream );
+                string expectedMimeType = GetMimeTypeFromExtension( file.FileName );
+
+                // Special handling for text-based formats that don't have magic numbers
+                if ( IsTextBasedExtension( file.FileName ) ) {
+                    // For text files, verify it's actually text content
+                    return actualMimeType.StartsWith( "text/" ) || actualMimeType == "application/octet-stream";
+                }
+
+                // For binary formats, we need a clear match
+                return actualMimeType == expectedMimeType ||
+                       IsMimeTypeCompatible( actualMimeType, expectedMimeType );
+            }
+            catch {
+                return false;
+            }
+        }
+
+        private bool IsTextBasedExtension( string fileName ) {
+            string extension = Path.GetExtension( fileName ).ToLowerInvariant();
+            return extension == ".csv" || extension == ".txt" || extension == ".xml";
+        }
+
+        private async Task<string> GetMimeTypeFromFileSignatureAsync( Stream stream ) {
+            byte[] buffer = new byte[512];
+            int bytesRead = await stream.ReadAsync( buffer, 0, buffer.Length );
+            stream.Position = 0;
+
+            if ( bytesRead < 4 )
+                return "application/octet-stream";
+
+            // Image formats
+            // JPEG
+            if ( buffer[0] == 0xFF && buffer[1] == 0xD8 && buffer[2] == 0xFF )
+                return "image/jpeg";
+
+            // PNG
+            if ( buffer[0] == 0x89 && buffer[1] == 0x50 && buffer[2] == 0x4E &&
+                buffer[3] == 0x47 && buffer[4] == 0x0D && buffer[5] == 0x0A &&
+                buffer[6] == 0x1A && buffer[7] == 0x0A )
+                return "image/png";
+
+            // TIFF (Little Endian)
+            if ( buffer[0] == 0x49 && buffer[1] == 0x49 && buffer[2] == 0x2A && buffer[3] == 0x00 )
+                return "image/tiff";
+
+            // TIFF (Big Endian)
+            if ( buffer[0] == 0x4D && buffer[1] == 0x4D && buffer[2] == 0x00 && buffer[3] == 0x2A )
+                return "image/tiff";
+
+            // PDF
+            if ( buffer[0] == 0x25 && buffer[1] == 0x50 && buffer[2] == 0x44 && buffer[3] == 0x46 )
+                return "application/pdf";
+
+            // ZIP and Office formats
+            if ( buffer[0] == 0x50 && buffer[1] == 0x4B && buffer[2] == 0x03 && buffer[3] == 0x04 ) {
+                return DetectOfficeFormat( buffer, bytesRead );
+            }
+
+            // Old Office formats (DOC, XLS, PPT)
+            if ( buffer[0] == 0xD0 && buffer[1] == 0xCF && buffer[2] == 0x11 &&
+                buffer[3] == 0xE0 && buffer[4] == 0xA1 && buffer[5] == 0xB1 &&
+                buffer[6] == 0x1A && buffer[7] == 0xE1 )
+                return "application/msoffice-legacy";
+
+            // Check if it's a text-based format
+            if ( IsTextBasedFormat( buffer, bytesRead ) ) {
+                return DetectTextFormat( buffer, bytesRead );
+            }
+
+            return "application/octet-stream";
+        }
+
+        private string DetectOfficeFormat( byte[] buffer, int bytesRead ) {
+            string content = System.Text.Encoding.ASCII.GetString( buffer, 0, Math.Min( bytesRead, 512 ) );
+
+            if ( content.Contains( "word/" ) )
+                return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+            if ( content.Contains( "xl/" ) )
+                return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+            if ( content.Contains( "ppt/" ) )
+                return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+
+            return "application/zip";
+        }
+
+        private bool IsTextBasedFormat( byte[] buffer, int bytesRead ) {
+            int sampleSize = Math.Min( bytesRead, 512 );
+            int textCharCount = 0;
+            int totalChars = 0;
+
+            for ( int i = 0; i < sampleSize; i++ ) {
+                byte b = buffer[i];
+                totalChars++;
+
+                // Null byte indicates binary
+                if ( b == 0 )
+                    return false;
+
+                // Check for UTF-8 BOM
+                if ( i == 0 && b == 0xEF && bytesRead > 2 && buffer[1] == 0xBB && buffer[2] == 0xBF ) {
+                    textCharCount += 3;
+                    continue;
+                }
+
+                // Count printable characters and common whitespace
+                if ( ( b >= 0x20 && b <= 0x7E ) || // Printable ASCII
+                    b == 0x09 || // Tab
+                    b == 0x0A || // Line feed
+                    b == 0x0D || // Carriage return
+                    b >= 0x80 )   // Extended ASCII/UTF-8
+                {
+                    textCharCount++;
+                }
+            }
+
+            // If at least 95% of characters are text-like, consider it text
+            double textRatio = ( double )textCharCount / totalChars;
+            return textRatio >= 0.95;
+        }
+
+        private string DetectTextFormat( byte[] buffer, int bytesRead ) {
+            string content = System.Text.Encoding.UTF8.GetString( buffer, 0, Math.Min( bytesRead, 512 ) ).TrimStart();
+
+            // XML detection
+            if ( content.StartsWith( "<?xml", StringComparison.OrdinalIgnoreCase ) ||
+                content.StartsWith( "<", StringComparison.OrdinalIgnoreCase ) )
+                return "text/xml";
+
+            // CSV detection - look for delimiter patterns
+            var lines = content.Split( new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries );
+            if ( lines.Length > 0 ) {
+                string firstLine = lines[0];
+                // Count commas - if there are multiple commas, likely CSV
+                int commaCount = firstLine.Count( c => c == ',' );
+                if ( commaCount >= 1 ) {
+                    // Additional validation: check if subsequent lines have similar comma count
+                    if ( lines.Length > 1 ) {
+                        int secondLineCommas = lines[1].Count( c => c == ',' );
+                        // If comma counts are similar, it's likely CSV
+                        if ( Math.Abs( commaCount - secondLineCommas ) <= 1 )
+                            return "text/csv";
+                    }
+                    else {
+                        // Single line with commas - assume CSV
+                        return "text/csv";
+                    }
+                }
+            }
+
+            return "text/plain";
+        }
+
+        private string GetMimeTypeFromExtension( string fileName ) {
+            string extension = Path.GetExtension( fileName ).ToLowerInvariant();
+
+            return extension switch {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".tiff" => "image/tiff",
+                ".pdf" => "application/pdf",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ".pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                ".doc" => "application/msword",
+                ".xls" => "application/vnd.ms-excel",
+                ".ppt" => "application/vnd.ms-powerpoint",
+                ".zip" => "application/zip",
+                ".xml" => "text/xml",
+                ".csv" => "text/csv",
+                ".txt" => "text/plain",
+                _ => "application/octet-stream"
+            };
+        }
+
+        private bool IsMimeTypeCompatible( string actual, string expected ) {
+            if ( actual == expected )
+                return true;
+
+            // Legacy Office formats - all use OLE/CFB signature (0xD0CF11E0A1B11AE1)
+            // We need to accept any of these when we detect the legacy format
+            if ( actual == "application/msoffice-legacy" &&
+                ( expected == "application/msword" ||
+                 expected == "application/vnd.ms-excel" ||
+                 expected == "application/vnd.ms-powerpoint" ) )
+                return true;
+
+            // Modern Office formats
+            if ( actual == "application/zip" &&
+                ( expected == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                 expected == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+                 expected == "application/vnd.openxmlformats-officedocument.presentationml.presentation" ||
+                 expected == "application/zip" ) )
+                return true;
+
+            if ( actual == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" &&
+                ( expected == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                 expected == "application/zip" ) )
+                return true;
+
+            if ( actual == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
+                ( expected == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+                 expected == "application/zip" ) )
+                return true;
+
+            if ( actual == "application/vnd.openxmlformats-officedocument.presentationml.presentation" &&
+                ( expected == "application/vnd.openxmlformats-officedocument.presentationml.presentation" ||
+                 expected == "application/zip" ) )
+                return true;
+
+            // Text format compatibility
+            if ( actual == "text/plain" && expected == "text/plain" )
+                return true;
+
+            if ( actual == "text/csv" && expected == "text/csv" )
+                return true;
+
+            if ( actual == "text/xml" && expected == "text/xml" )
+                return true;
+
+            return false;
+        }
+
+        /*TODO: Remove BTGM formul iceren excel dosyalarinin upload edilmesine izin verdi. private bool IsExcel( FileResult file ) {
             var ext = Path.GetExtension( file.FileName )?.ToLowerInvariant();
             if ( ext == ".xlsx" || ext == ".xls" || ext == ".csv" ) return true;
 
             var mime = file.ContentType?.ToLowerInvariant() ?? "";
             return mime.Contains( "spreadsheet" ) || mime.Contains( "excel" );
-        }
+        }*/
+
+
 
 
         [RelayCommand]
