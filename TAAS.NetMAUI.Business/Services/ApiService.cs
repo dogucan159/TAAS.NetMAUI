@@ -479,7 +479,8 @@ namespace TAAS.NetMAUI.Business.Services {
                                 var response = await client.GetAsync( $"{_endpointSettings.ControllerName}taas-file/getWithFileData?id={taasFileDto.Id}" );
                                 response.EnsureSuccessStatusCode();
                                 var taasFileJsonString = await response.Content.ReadAsStringAsync();
-                                TaasFileDto? taasFileResult = JsonConvert.DeserializeObject<TaasFileDto>( taasFileJsonString );
+
+                                TaasFileDto? taasFileResult = JsonConvert.DeserializeObject<TaasFileDto>( taasFileJsonString, globalJsonSerializerSettings );
 
                                 newChecklistTaasFile.TaasFile = _mapper.Map<TaasFile>( taasFileResult );
                                 newChecklistTaasFile.TaasFile.ApiId = taasFileResult.Id;
@@ -610,7 +611,7 @@ namespace TAAS.NetMAUI.Business.Services {
 
                                 }
                                 catch ( HttpRequestException ex ) {
-                                    throw new Exception( ex.Message );
+                                    throw new Exception( $"An error occurred while creating the uploaded file {createdChecklistTaasFile.TaasFile.Name} in the file service: {ex.Message}" );
                                 }
                             } //end if
                             var checklistTaasFilePayload = new {
@@ -633,7 +634,7 @@ namespace TAAS.NetMAUI.Business.Services {
 
                             }
                             catch ( HttpRequestException ex ) {
-                                throw new Exception( ex.Message );
+                                throw new Exception( $"The uploaded file was created on the file service, but it could not be added to the checklist with id value {checklistDto.Id}: {ex.Message}" );
                             }
                         }
 
@@ -654,7 +655,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                     response.EnsureSuccessStatusCode();
                                 }
                                 catch ( HttpRequestException ex ) {
-                                    throw new Exception( ex.Message );
+                                    throw new Exception( $"An error occurred while deleting the uploaded file with id value {dbDeletedTaasFile.ApiId} from the checklist with id value {checklistDto.Id}: {ex.Message}" );
                                 }
                             }
                         }
@@ -678,7 +679,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                 response.EnsureSuccessStatusCode();
                             }
                             catch ( HttpRequestException ex ) {
-                                throw new Exception( ex.Message );
+                                throw new Exception( $"An error occurred while updating the checklist detail with id value {checklistDetail.Id}: {ex.Message}" );
                             }
 
                             //Files
@@ -715,7 +716,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                         }
                                     }
                                     catch ( HttpRequestException ex ) {
-                                        throw new Exception( ex.Message );
+                                        throw new Exception( $"An error occurred while adding the uploaded files to the checklist detail with id value {checklistDetail.Id}: {ex.Message}" );
                                     }
                                 }
 
@@ -735,7 +736,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                             response.EnsureSuccessStatusCode();
                                         }
                                         catch ( HttpRequestException ex ) {
-                                            throw new Exception( ex.Message );
+                                            throw new Exception( $"An error occurred while removing the uploaded file with id value {deletedChecklistDetailTaasFile.TaasFileId} from the checklist detail with id value {checklistDetail.Id}: {ex.Message}" );
                                         }
                                     }
                                 }
@@ -760,7 +761,7 @@ namespace TAAS.NetMAUI.Business.Services {
                                 response.EnsureSuccessStatusCode();
                             }
                             catch ( HttpRequestException ex ) {
-                                throw new Exception( ex.Message );
+                                throw new Exception( $"An error occurred while updating the checklist header with id value {checklistHeader.Id}: {ex.Message}" );
                             }
                         }
                     }
@@ -776,7 +777,7 @@ namespace TAAS.NetMAUI.Business.Services {
                         }
                     }
                     catch ( HttpRequestException ex ) {
-                        throw new Exception( ex.Message );
+                        throw new Exception( $"An error occurred while finalizing the checklist with id value {checklistDto.Id}: {ex.Message}" );
                     }
 
                     ////Approve
@@ -809,7 +810,7 @@ namespace TAAS.NetMAUI.Business.Services {
                         response.EnsureSuccessStatusCode();
                     }
                     catch ( HttpRequestException ex ) {
-                        throw new Exception( ex.Message );
+                        throw new Exception( $"An error occurred while updating the offline status of the checklist with id value {checklistDto.Id}: {ex.Message}" );
                     }
 
                 } //end foreach

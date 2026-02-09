@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.LifecycleEvents;
 using TAAS.NetMAUI.Business;
 using TAAS.NetMAUI.Business.Interfaces;
 using TAAS.NetMAUI.Business.Services;
@@ -9,6 +10,11 @@ using TAAS.NetMAUI.Infrastructure.Interfaces;
 using TAAS.NetMAUI.Infrastructure.Repositories;
 using TAAS.NetMAUI.Presentation.Utilities.Dialog;
 using TAAS.NetMAUI.Presentation.ViewModels;
+#if WINDOWS
+using Microsoft.UI.Windowing;
+using Microsoft.UI;
+using Windows.Graphics;
+#endif
 
 namespace TAAS.NetMAUI.Presentation {
     public static class MauiProgram {
@@ -16,6 +22,24 @@ namespace TAAS.NetMAUI.Presentation {
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+            .ConfigureLifecycleEvents( events => {
+#if WINDOWS
+    events.AddWindows(windows =>
+    {
+        windows.OnWindowCreated(window =>
+        {
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
+            var appWindow = AppWindow.GetFromWindowId(windowId);
+
+            if (appWindow.Presenter is OverlappedPresenter presenter)
+            {
+                presenter.Maximize();
+            }
+        });
+    });
+#endif
+            } )
                 .ConfigureFonts( fonts => {
                     fonts.AddFont( "OpenSans-Regular.ttf", "OpenSansRegular" );
                     fonts.AddFont( "OpenSans-Semibold.ttf", "OpenSansSemibold" );

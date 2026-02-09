@@ -111,17 +111,22 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
                     code = code.Trim();
 
                     IsBusy = true;
+
                     try {
                         await _manager.ApiService.VerifySmsCode( code );
-
-                        await Transfer();
-                        await Shell.Current.DisplayAlert( "Success", "Checklists transferred to live!", "OK" );
-                        await LoadChecklistsAsync();
-
                     }
                     catch ( Exception ex ) {
                         await _dialogService.ShowAlertAsync( "Error", $"Failed to verify SMS code or pull data: {ex.Message}" );
                     }
+
+                    try {
+                        await Transfer();
+                        await _dialogService.ShowAlertAsync( "Success", $"Checklists transferred to live!" );
+                        await LoadChecklistsAsync();
+                    }
+                    catch ( Exception ex ) {
+                        await _dialogService.ShowAlertAsync( "Error", $"Failed to transfer checklists: {ex.Message}" );
+                    }                    
                 }
                 finally {
                     IsBusy = false;
@@ -130,12 +135,12 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
 #else
                 try {
                     await Transfer();
-                    await Shell.Current.DisplayAlert( "Success", "Unsynced files transferred to live!", "OK" );
-                    await LoadChecklistsAsync();
+                    await Shell.Current.DisplayAlert( "Success", "Checklists transferred to live!", "OK" );
+                    //await LoadChecklistsAsync();
+                    this.Checklists.Clear();
                 }
                 catch ( Exception ex ) {
-                    Debug.WriteLine( $"[TransferToLiveAsync] ERROR: {ex.Message}" );
-                    await Shell.Current.DisplayAlert( "Error", "Failed to pull data.", "OK" );
+                    await Shell.Current.DisplayAlert( "Error", $"Failed to transfer checklists: {ex.Message}", "OK" );
                 }
                 finally {
                     IsBusy = false;

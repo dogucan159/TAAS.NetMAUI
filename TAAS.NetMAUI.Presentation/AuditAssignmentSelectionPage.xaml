@@ -9,7 +9,7 @@
     <Shell.TitleView>
         <local:ShellTitleView ViewTitle="Audit Assignments" />
     </Shell.TitleView>
-    
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
@@ -29,7 +29,7 @@
             IsRunning="{Binding IsBusy}"
             IsVisible="{Binding IsBusy}" />
 
-            <HorizontalStackLayout Margin="20" Spacing="10" HorizontalOptions="Fill">
+            <!--<HorizontalStackLayout Margin="20" Spacing="10" HorizontalOptions="Fill">
                 <Grid HorizontalOptions="Fill" Margin="20" ColumnSpacing="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="4*" />
@@ -74,7 +74,53 @@
                         Style="{StaticResource CancelButtonStyle}"
                    />
                 </Grid>
-            </HorizontalStackLayout>
+            </HorizontalStackLayout>-->
+
+            <FlexLayout Margin="4" Direction="Row" Wrap="Wrap" JustifyContent="Start" AlignItems="Center" >
+                <Entry 
+                       Text="{Binding MainTaskEntry}"
+                       Grid.Column="0"
+                       Placeholder="Main Task"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Center"
+                       MinimumWidthRequest="200"
+                       Margin="0,0,8,8"
+                    />
+                <Entry 
+                       Text="{Binding TaskTypeEntry}"
+                       Grid.Column="1"
+                       Placeholder="Task Type"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Center"
+                       MinimumWidthRequest="200"
+                       Margin="0,0,8,8"/>
+                <Entry 
+                       Text="{Binding TaskEntry}"
+                       Grid.Column="2"
+                       Placeholder="Task"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Center"
+                       MinimumWidthRequest="200"
+                       Margin="0,0,8,8"/>
+                <HorizontalStackLayout Margin="0,0,0,8">
+                    <Button 
+                        Grid.Column="3"
+                        Text="Get Audit Assignments"
+                        Command="{Binding GetAuditAssignmentsCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                        Margin="0,0,8,0"
+                   />
+                    <Button 
+                        Grid.Column="4"
+                        Text="Clear"
+                        Command="{Binding ClearCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                        Style="{StaticResource CancelButtonStyle}"
+                        Margin="0,0,0,0"
+                   />
+                </HorizontalStackLayout>
+
+            </FlexLayout>
 
             <Border>
                 <CollectionView ItemsSource="{Binding AuditAssignments}">

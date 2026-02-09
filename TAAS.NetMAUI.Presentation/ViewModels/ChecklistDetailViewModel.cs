@@ -200,16 +200,20 @@ namespace TAAS.NetMAUI.Presentation.ViewModels {
 
         [RelayCommand]
         public async System.Threading.Tasks.Task TakePhotoAsync() {
+
             try {
                 FileResult photo = await MediaPicker.CapturePhotoAsync();
 
                 if ( photo != null )
                     await SaveFileAndLoad( photo );
-
+            }
+            catch ( FeatureNotSupportedException ) {
+                await Shell.Current.DisplayAlert( "Error",
+                    "Camera capture is not supported on this device.",
+                    "OK" );
             }
             catch ( Exception ex ) {
-                Debug.WriteLine( $"[TakePhotoAsync] {ex.Message}" );
-                await Shell.Current.DisplayAlert( "Error", "Photo could not be saved.", "OK" );
+                await Shell.Current.DisplayAlert( "Error", $"Photo could not be saved: {ex.Message}", "OK" );
             }
         }
 

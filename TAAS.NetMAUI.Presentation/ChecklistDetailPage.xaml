@@ -120,11 +120,11 @@
                 </VerticalStackLayout>
 
                 <!--Headers-->
-                <VerticalStackLayout Padding="5" Spacing="5">
+                <VerticalStackLayout IsVisible="False" Padding="5" Spacing="5">
                     <Label Text="Headers"/>
                     <Border>
                         <Border.Content>
-                            <CollectionView ItemsSource="{Binding HeaderList}" SelectionMode="None">
+                            <CollectionView ItemsSource="{Binding HeaderList}" SelectionMode="None" HeightRequest="300">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid ColumnDefinitions="1*,4*" Padding="10" ColumnSpacing="15">
@@ -158,7 +158,7 @@
                     <Label Text="Details" />
                     <Border>
                         <Border.Content>
-                            <CollectionView ItemsSource="{Binding ChecklistGrouped}" SelectionMode="None">
+                            <CollectionView ItemsSource="{Binding ChecklistGrouped}" SelectionMode="None" HeightRequest="300">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <VerticalStackLayout>
@@ -295,7 +295,7 @@
                     <Border>
                         <Border.Content>
                             <VerticalStackLayout>
-                                <CollectionView ItemsSource="{Binding UploadedFileList}">
+                                <CollectionView ItemsSource="{Binding UploadedFileList}" HeightRequest="200">
                                     <CollectionView.ItemTemplate>
                                         <DataTemplate>
                                             <Grid Padding="1" ColumnDefinitions="3*,2*,Auto" RowDefinitions="Auto">
@@ -342,7 +342,7 @@
 
         <Grid Grid.Row="1" 
               Padding="10">
-            
+
             <Button Text="Finalize" HorizontalOptions="Fill"
                         Command="{Binding FinalizeChecklistCommand}"
                         IsVisible="{Binding IsEditable}"
@@ -351,16 +351,6 @@
                         Command="{Binding UndoFinalizeChecklistCommand}"
                         IsVisible="{Binding IsUndoFinalizeButtonVisible}"
                         Style="{StaticResource CancelButtonStyle}"/>
-
-            <!--<Button Text="Approve" HorizontalOptions="Fill"
-                        Command="{Binding ApproveChecklistCommand}"
-                        IsVisible="{Binding IsApproveButtonVisible}"
-                        Style="{StaticResource SaveButtonStyle}"/>
-            
-            <Button Text="Undo Approve" HorizontalOptions="Fill"
-                        Command="{Binding UndoApproveChecklistCommand}" 
-                        IsVisible="{Binding IsUndoApproveButtonVisible}"
-                        Style="{StaticResource CancelButtonStyle}"/>-->
 
         </Grid>
 

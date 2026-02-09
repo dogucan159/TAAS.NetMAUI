@@ -7,11 +7,10 @@
              xmlns:converters="clr-namespace:TAAS.NetMAUI.Presentation.Converters">
 
     <Shell.TitleView>
-        <local:ShellTitleView ViewTitle="Audit Assignments" />        
+        <local:ShellTitleView ViewTitle="Audit Assignments" />
     </Shell.TitleView>
-    
-    
 
+    <!-- RESOURCES -->
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:AuditNameToStringConverter x:Key="AuditNameToStringConverter" />
@@ -23,21 +22,16 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ScrollView>
+    <!-- ROOT GRID (NO SCROLLVIEW) -->
+    <Grid RowDefinitions="Auto,*" Padding="10">
 
-        <VerticalStackLayout Padding="10" Spacing="15">
-            <!--<Label 
-                Text="{Binding WelcomeMessage}" 
-                FontSize="20" 
-                TextColor="{StaticResource OffBlack}"
-                HorizontalOptions="Start" />-->
+        <!-- INFO TEXT -->
+        <VerticalStackLayout Grid.Row="0" Spacing="15">
             <Label HorizontalOptions="Start">
                 <Label.FormattedText>
                     <FormattedString>
-                        <!-- Plain text before the link -->
                         <Span Text="The audit assignments you previously retrieved from the web service are listed below. Click " />
 
-                        <!-- Clickable text -->
                         <Span Text="here"
                               TextDecorations="Underline"
                               TextColor="{StaticResource HmbHyperlink}">
@@ -46,108 +40,115 @@
                             </Span.GestureRecognizers>
                         </Span>
 
-                        <!-- Plain text after the link -->
                         <Span Text=" to pull new data" />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-
-            <!--<Button 
-                Grid.Column="1"
-                HorizontalOptions="Fill"
-                VerticalOptions="Center"
-                Text="Pull Data"
-                Command="{Binding PullDataCommand}"
-                BackgroundColor="SteelBlue"
-                TextColor="White"
-                CornerRadius="8" />-->
-            <Border>
-                <CollectionView ItemsSource="{Binding AuditAssignments}">
-
-                    <CollectionView.EmptyView>
-                        <Label Text="No data to display" />
-                    </CollectionView.EmptyView>
-
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical"
-                            Span="3"
-                            VerticalItemSpacing="10"
-                            HorizontalItemSpacing="10"/>
-                    </CollectionView.ItemsLayout>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border>
-                                <Border.Content>
-                                    <VerticalStackLayout>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Audit Name: " FontAttributes="Bold" />
-                                                    <Span Text="{Binding Converter={StaticResource AuditNameToStringConverter}}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Coordinator: " FontAttributes="Bold" />
-                                                    <Span Text="{Binding CoordinatorAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Auditors: " FontAttributes="Bold" />
-                                                    <Span Text="{Binding AuditAssignmentAuditors, Converter={StaticResource AuditAssignmentAuditorsToStringConverter}}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Temporary Auditors: " FontAttributes="Bold" />
-                                                    <Span Text="{Binding AuditAssignmentTemporaryAuditors, Converter={StaticResource AuditAssignmentTemporaryAuditorsToStringConverter}}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Operation Audit Types: " FontAttributes="Bold" />
-                                                    <Span Text="{Binding AuditAssignmentOperationAuditTypes, Converter={StaticResource AuditAssignmentOperationAuditTypesToStringConverter}}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Financial Audit Types: " FontAttributes="Bold" />
-                                                    <Span Text="{Binding AuditAssignmentFinancialAuditTypes, Converter={StaticResource AuditAssignmentFinancialAuditTypesToStringConverter}}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <HorizontalStackLayout Margin="10" Spacing="1">
-                                            <Button Text="System Audits"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainPageViewModel}}, Path=ShowSystemAuditChecklistsCommand}"
-                                                CommandParameter="{Binding .}"/>
-                                            <Button Text="Operation Audits"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainPageViewModel}}, Path=ShowOperationAuditChecklistsCommand}"
-                                                CommandParameter="{Binding .}"/>
-                                            <Button Text="Financial Audits"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainPageViewModel}}, Path=ShowFinancialAuditChecklistsCommand}"
-                                                CommandParameter="{Binding .}"/>
-                                        </HorizontalStackLayout>
-
-                                    </VerticalStackLayout>
-                                </Border.Content>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Border>
         </VerticalStackLayout>
-    </ScrollView>
 
+        <!-- COLLECTIONVIEW WITH BORDER (UNCHANGED LOOK) -->
+        <Border Grid.Row="1">
+
+            <CollectionView ItemsSource="{Binding AuditAssignments}">
+
+                <CollectionView.EmptyView>
+                    <Label Text="No data to display" />
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical"
+                                     Span="3"
+                                     VerticalItemSpacing="10"
+                                     HorizontalItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <VerticalStackLayout Padding="32">
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Audit Name: " FontAttributes="Bold" />
+                                            <Span Text="{Binding Converter={StaticResource AuditNameToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Coordinator: " FontAttributes="Bold" />
+                                            <Span Text="{Binding CoordinatorAuditor, Converter={StaticResource CoordinatorAuditorToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Auditors: " FontAttributes="Bold" />
+                                            <Span Text="{Binding AuditAssignmentAuditors, Converter={StaticResource AuditAssignmentAuditorsToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Temporary Auditors: " FontAttributes="Bold" />
+                                            <Span Text="{Binding AuditAssignmentTemporaryAuditors, Converter={StaticResource AuditAssignmentTemporaryAuditorsToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Operation Audit Types: " FontAttributes="Bold" />
+                                            <Span Text="{Binding AuditAssignmentOperationAuditTypes, Converter={StaticResource AuditAssignmentOperationAuditTypesToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Financial Audit Types: " FontAttributes="Bold" />
+                                            <Span Text="{Binding AuditAssignmentFinancialAuditTypes, Converter={StaticResource AuditAssignmentFinancialAuditTypesToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <FlexLayout Margin="4" Direction="Row" Wrap="Wrap" JustifyContent="Start" AlignItems="Center" >
+                                    <Button Text="System Audits"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainPageViewModel}}, Path=ShowSystemAuditChecklistsCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Style="{StaticResource BorderButtonStyle}" 
+                                            Margin="0,0,1,1"/> <!-- left,top,right,bottom -->
+
+                                    <Button Text="Operation Audits"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainPageViewModel}}, Path=ShowOperationAuditChecklistsCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Style="{StaticResource BorderButtonStyle}"
+                                            Margin="0,0,1,1"/>
+
+                                    <Button Text="Financial Audits"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainPageViewModel}}, Path=ShowFinancialAuditChecklistsCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Style="{StaticResource BorderButtonStyle}"
+                                            Margin="0,0,0,1"/>
+                                </FlexLayout>
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </Border>
+
+    </Grid>
 </ContentPage>
