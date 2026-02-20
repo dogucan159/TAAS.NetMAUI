@@ -154,7 +154,7 @@
                                         <Label>
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="Main Task: " FontAttributes="Bold" />
+                                                    <Span Text="Audit Name: " FontAttributes="Bold" />
                                                     <Span Text="{Binding Converter={StaticResource AuditNameToStringConverter}}" />
                                                 </FormattedString>
                                             </Label.FormattedText>
